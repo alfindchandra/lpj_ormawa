@@ -45,7 +45,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => 'Maaf, email atau kata sandi yang kamu masukkan salah. Silakan coba lagi!',
             ]);
         }
 
@@ -82,4 +82,12 @@ class LoginRequest extends FormRequest
     {
         return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
+    public function messages(): array
+{
+    return [
+        'email.required' => 'Emailnya wajib diisi ya, Kak!',
+        'email.email' => 'Format email kamu nggak valid nih. Periksa lagi ya.',
+        'password.required' => 'Kata sandi tidak boleh kosong.',
+    ];
+}
 }

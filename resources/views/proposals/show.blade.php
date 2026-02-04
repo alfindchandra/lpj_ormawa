@@ -5,7 +5,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Detail Proposal: {{ $proposal->kode_proposal }}
             </h2>
-            <a href="{{ route('proposals.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
+            <a href="{{ route('proposals.index') }}" class="text-sm mx-4 text-blue-600 hover:text-blue-800">
                 &larr; Kembali
             </a>
         </div>

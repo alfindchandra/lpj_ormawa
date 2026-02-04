@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'ORMAWA Monitoring') }} - @yield('title', 'Dashboard')</title>
+        <link rel="icon" type="image/png" href="{{ asset('xlogo.png') }}"/>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -60,7 +61,7 @@
                     </svg>
                     <div>
                         <div class="text-sm font-bold">ORMAWA</div>
-                        <div class="text-xs text-blue-300">Monitoring System</div>
+                        <div class="text-xs text-blue-300">Sistem Monitoring</div>
                     </div>
                 </div>
                 <button @click="sidebarOpen = false" class="lg:hidden">
@@ -191,12 +192,7 @@
                     <!-- Right Side Icons -->
                     <div class="flex items-center space-x-4">
                         <!-- Notifications -->
-                        <button class="relative text-gray-500 hover:text-gray-700">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                            </svg>
-                            <span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-                        </button>
+                        
 
                         <!-- User Dropdown (Desktop) -->
                         <div class="hidden sm:block" x-data="{ open: false }">
@@ -206,6 +202,7 @@
                                         {{ substr(Auth::user()->name, 0, 1) }}
                                     </span>
                                 </div>
+                                <span class="font-medium">{{ Auth::user()->name }}</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                 </svg>
@@ -241,9 +238,9 @@
                             © {{ date('Y') }} IKIP PGRI Bojonegoro. All rights reserved.
                         </div>
                         <div class="mt-4 md:mt-0 flex space-x-6 text-sm text-gray-500">
-                            <a href="#" class="hover:text-gray-700">Bantuan</a>
-                            <a href="#" class="hover:text-gray-700">Tentang</a>
-                            <a href="#" class="hover:text-gray-700">Kontak</a>
+                            <a href="https://wa.me/622087865215760?text=Saya%20butuh%20bantuan" target="_blank" class="hover:text-gray-700">Bantuan</a>
+                            <a href="https://ikippgribojonegoro.ac.id/" class="hover:text-gray-700">Tentang</a>
+                            <a href="tel:0353 881046" class="hover:text-gray-700">Kontak</a>
                         </div>
                     </div>
                 </div>

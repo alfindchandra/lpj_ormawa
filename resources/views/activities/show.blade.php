@@ -1,11 +1,10 @@
-<!-- resources/views/activities/show.blade.php -->
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Monitoring Kegiatan: {{ $activity->proposal->nama_kegiatan }}
             </h2>
-            <a href="{{ route('activities.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
+            <a href="{{ route('activities.index') }}" class="text-sm mx-4 text-blue-600 hover:text-blue-800">
                 &larr; Kembali
             </a>
         </div>
