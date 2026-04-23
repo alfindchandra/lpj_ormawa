@@ -56,8 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/archives', [ArchiveController::class, 'index'])->name('archives.index');
     Route::get('/archives/{period}', [ArchiveController::class, 'show'])->name('archives.show');
     Route::get('/archives/{period}/export', [ArchiveController::class, 'exportPDF'])
-        ->name('archives.export')
-        ->middleware('role:admin,bem');
+        ->name('archives.export');
     
     // Report Routes
     Route::get('/reports', [ReportController::class, 'index'])

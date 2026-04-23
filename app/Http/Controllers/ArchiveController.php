@@ -57,6 +57,9 @@ class ArchiveController extends Controller
 
         $pdf = Pdf::loadView('archives.pdf-report', compact('period', 'proposals', 'statistics'));
         
-        return $pdf->download('Laporan_Kegiatan_' . $period->nama_periode . '.pdf');
+        // Sanitize filename by removing invalid characters
+        $sanitizedName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '_', $period->nama_periode);
+        
+        return $pdf->download('Laporan_Kegiatan_' . $sanitizedName . '.pdf');
     }
 }
