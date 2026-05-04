@@ -16,7 +16,12 @@ return new class extends Migration
             $table->text('deskripsi');
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
+            $table->enum('tipe_lokasi', ['internal', 'eksternal'])->nullable();
             $table->string('tempat');
+            $table->text('barang_diperlukan');
+            $table->text('sewa_tempat');
+            $table->text('jasa');
+            $table->text('bahan');
             $table->decimal('anggaran', 15, 2);
             $table->string('file_proposal');
             $table->enum('status', ['pending', 'approved_bem', 'approved_admin', 'rejected'])->default('pending');

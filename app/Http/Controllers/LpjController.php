@@ -11,6 +11,11 @@ class LpjController extends Controller
 {
     public function create(Activity $activity)
     {
+        $user = Auth::user();
+        if (!in_array($user->role, ['ormawa', 'bem'])) {
+            abort(403, 'Hanya ORMAWA dan BEM yang dapat membuat LPJ.');
+        }
+        
         if ($activity->lpj) {
             return redirect()->route('activities.show', $activity)
                 ->with('error', 'LPJ sudah pernah dibuat untuk kegiatan ini');
@@ -21,6 +26,10 @@ class LpjController extends Controller
 
     public function store(Request $request, Activity $activity)
     {
+        $user = Auth::user();
+        if (!in_array($user->role, ['ormawa', 'bem'])) {
+            abort(403, 'Hanya ORMAWA dan BEM yang dapat membuat LPJ.');
+        }
         $validated = $request->validate([
             'laporan_kegiatan' => 'required|string',
             'realisasi_anggaran' => 'required|numeric|min:0',

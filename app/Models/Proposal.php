@@ -11,8 +11,9 @@ class Proposal extends Model
 {
     protected $fillable = [
         'user_id', 'kode_proposal', 'nama_kegiatan', 'deskripsi',
-        'tanggal_mulai', 'tanggal_selesai', 'tempat', 'anggaran',
-        'file_proposal', 'status', 'catatan_bem', 'catatan_admin'
+        'tanggal_mulai', 'tanggal_selesai', 'tipe_lokasi', 'tempat', 
+        'barang_diperlukan', 'sewa_tempat', 'jasa', 'bahan',
+        'anggaran', 'file_proposal', 'status', 'catatan_bem', 'catatan_admin'
     ];
 
     protected $casts = [

@@ -19,23 +19,36 @@ class ProposalController extends Controller
         } else {
             $proposals = Proposal::with('user')->latest()->get();
         }
-        
+         
         return view('proposals.index', compact('proposals'));
     }
 
     public function create()
     {
+        $user = Auth::user();
+        if (!in_array($user->role, ['ormawa', 'bem'])) {
+            abort(403, 'Hanya ORMAWA dan BEM yang dapat membuat proposal.');
+        }
         return view('proposals.create');
     }
 
     public function store(Request $request)
     {
+        $user = Auth::user();
+        if (!in_array($user->role, ['ormawa', 'bem'])) {
+            abort(403, 'Hanya ORMAWA dan BEM yang dapat membuat proposal.');
+        }
         $validated = $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'tipe_lokasi' => 'required|in:internal,eksternal',
             'tempat' => 'required|string|max:255',
+            'barang_diperlukan' => 'required|string',
+            'sewa_tempat' => 'required|string',
+            'jasa' => 'required|string',
+            'bahan' => 'required|string',
             'anggaran' => 'required|numeric|min:0',
             'file_proposal' => 'required|file|mimes:pdf|max:5120',
         ]);
@@ -51,7 +64,12 @@ class ProposalController extends Controller
             'deskripsi' => $validated['deskripsi'],
             'tanggal_mulai' => $validated['tanggal_mulai'],
             'tanggal_selesai' => $validated['tanggal_selesai'],
+            'tipe_lokasi' => $validated['tipe_lokasi'],
             'tempat' => $validated['tempat'],
+            'barang_diperlukan' => $validated['barang_diperlukan'],
+            'sewa_tempat' => $validated['sewa_tempat'],
+            'jasa' => $validated['jasa'],
+            'bahan' => $validated['bahan'],
             'anggaran' => $validated['anggaran'],
             'file_proposal' => $filePath,
             'status' => 'pending',

@@ -7,6 +7,25 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-blue-500 to-green-600 rounded-lg shadow-lg p-6 mb-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-2">Selamat Datang, {{ Auth::user()->name }}! 👋</h3>
+                        <p class="text-blue-100">Mari kelola kegiatan {{ Auth::user()->ormawa_name }} dengan lebih
+                            efektif</p>
+                    </div>
+                    <div class="hidden md:block">
+                        <svg class="w-24 h-24 text-white opacity-20" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                            <path fill-rule="evenodd"
+                                d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
             <!-- Statistics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
                 <div class="bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden shadow-lg sm:rounded-lg">
@@ -82,7 +101,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold mb-4">Menu Cepat</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                         <a href="{{ route('proposals.index') }}"
                             class="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
                             <svg class="w-8 h-8 text-blue-600 mb-2" fill="none" stroke="currentColor"
@@ -110,15 +129,7 @@
                             </svg>
                             <span class="text-sm font-medium text-gray-700">Arsip Kegiatan</span>
                         </a>
-                        <a href="{{ route('reports.index') }}"
-                            class="flex flex-col items-center p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition">
-                            <svg class="w-8 h-8 text-yellow-600 mb-2" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <span class="text-sm font-medium text-gray-700">Laporan</span>
-                        </a>
+
                     </div>
                 </div>
             </div>

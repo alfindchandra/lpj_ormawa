@@ -11,7 +11,8 @@ class Activity extends Model
 {
     protected $fillable = [
         'proposal_id', 'user_id', 'status',
-        'jumlah_peserta', 'catatan_pelaksanaan'
+        'jumlah_peserta', 'catatan_pelaksanaan',
+        'nama_kegiatan', 'deskripsi', 'tanggal_mulai', 'tanggal_selesai'
     ];
 
     public function proposal(): BelongsTo

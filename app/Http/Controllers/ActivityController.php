@@ -27,6 +27,41 @@ class ActivityController extends Controller
         return view('activities.index', compact('activities'));
     }
 
+    public function create()
+    {
+        if (Auth::user()->role !== 'bem') {
+            abort(403, 'Unauthorized action.');
+        }
+        return view('activities.create');
+    }
+
+    public function store(Request $request)
+    {
+        if (Auth::user()->role !== 'bem') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validate([
+            'nama_kegiatan' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'status' => 'required|in:scheduled,ongoing,completed,cancelled',
+        ]);
+
+        $activity = Activity::create([
+            'user_id' => Auth::id(),
+            'nama_kegiatan' => $validated['nama_kegiatan'],
+            'deskripsi' => $validated['deskripsi'],
+            'tanggal_mulai' => $validated['tanggal_mulai'],
+            'tanggal_selesai' => $validated['tanggal_selesai'],
+            'status' => $validated['status'],
+        ]);
+
+        return redirect()->route('activities.show', $activity)
+            ->with('success', 'Kegiatan berhasil dibuat');
+    }
+
     public function show(Activity $activity)
     {
         $activity->load(['proposal', 'user', 'documentations', 'lpj']);
@@ -35,6 +70,17 @@ class ActivityController extends Controller
 
     public function updateStatus(Request $request, Activity $activity)
     {
+        $user = Auth::user();
+        
+        // Allow ORMAWA who owns the activity or BEM
+        if ($user->role === 'ormawa' && $user->id !== $activity->user_id) {
+            abort(403, 'Anda hanya dapat mengubah status kegiatan milik organisasi Anda.');
+        }
+        
+        if (!in_array($user->role, ['ormawa', 'bem'])) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $validated = $request->validate([
             'status' => 'required|in:scheduled,ongoing,completed,cancelled',
             'jumlah_peserta' => 'nullable|integer|min:0',
@@ -48,6 +94,17 @@ class ActivityController extends Controller
 
     public function uploadDocumentation(Request $request, Activity $activity)
     {
+        $user = Auth::user();
+        
+        // Allow ORMAWA who owns the activity or BEM
+        if ($user->role === 'ormawa' && $user->id !== $activity->user_id) {
+            abort(403, 'Anda hanya dapat mengupload dokumentasi kegiatan milik organisasi Anda.');
+        }
+        
+        if (!in_array($user->role, ['ormawa', 'bem'])) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $validated = $request->validate([
             'file' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'keterangan' => 'nullable|string'

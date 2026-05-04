@@ -39,9 +39,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Activity Routes
     Route::resource('activities', ActivityController::class)->only(['index', 'show']);
     Route::post('/activities/{activity}/update-status', [ActivityController::class, 'updateStatus'])
-        ->name('activities.update-status');
+        ->name('activities.update-status')
+        ->middleware('role:ormawa,bem');
     Route::post('/activities/{activity}/upload-documentation', [ActivityController::class, 'uploadDocumentation'])
-        ->name('activities.upload-documentation');
+        ->name('activities.upload-documentation')
+        ->middleware('role:ormawa,bem');
     
     // LPJ Routes
     Route::get('/activities/{activity}/lpj/create', [LpjController::class, 'create'])
