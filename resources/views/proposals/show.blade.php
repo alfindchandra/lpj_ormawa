@@ -97,40 +97,88 @@
                             <h3 class="text-lg font-semibold mb-4 pb-2 border-b">Detail Anggaran</h3>
 
                             <div class="space-y-6">
-                                <!-- Barang yang diperlukan -->
+                                <!-- Internal: Kebersihan dll -->
+                                @if($proposal->internal_items && count($proposal->internal_items) > 0)
                                 <div>
-                                    <label class="text-sm font-medium text-gray-500 block mb-2">Barang yang
-                                        diperlukan</label>
-                                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                                        <p class="text-gray-700 whitespace-pre-wrap">{{ $proposal->barang_diperlukan }}
-                                        </p>
+                                    <label class="text-sm font-medium text-gray-500 block mb-2">Internal: Kebersihan dll</label>
+                                    <div class="overflow-x-auto border rounded-lg">
+                                        <table class="w-full text-sm">
+                                            <thead class="bg-gray-100">
+                                                <tr>
+                                                    <th class="px-4 py-3 text-left">Item</th>
+                                                    <th class="px-4 py-3 text-right">Harga</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($proposal->internal_items as $item)
+                                                <tr class="border-t">
+                                                    <td class="px-4 py-3 text-gray-700">{{ $item['item'] ?? '-' }}</td>
+                                                    <td class="px-4 py-3 text-right text-gray-700">Rp {{ number_format($item['harga'] ?? 0, 0, ',', '.') }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
+                                @endif
 
-                                <!-- Sewa Tempat / Tempat -->
+                                <!-- External: Jasa MC dll -->
+                                @if($proposal->external_items && count($proposal->external_items) > 0)
                                 <div>
-                                    <label class="text-sm font-medium text-gray-500 block mb-2">Sewa Tempat /
-                                        Tempat</label>
-                                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                                        <p class="text-gray-700 whitespace-pre-wrap">{{ $proposal->sewa_tempat }}</p>
+                                    <label class="text-sm font-medium text-gray-500 block mb-2">External: Jasa MC dll</label>
+                                    <div class="overflow-x-auto border rounded-lg">
+                                        <table class="w-full text-sm">
+                                            <thead class="bg-gray-100">
+                                                <tr>
+                                                    <th class="px-4 py-3 text-left">Jasa/Layanan</th>
+                                                    <th class="px-4 py-3 text-center">Jumlah</th>
+                                                    <th class="px-4 py-3 text-right">Harga/Satuan</th>
+                                                    <th class="px-4 py-3 text-right">Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($proposal->external_items as $item)
+                                                <tr class="border-t">
+                                                    <td class="px-4 py-3 text-gray-700">{{ $item['jasa'] ?? '-' }}</td>
+                                                    <td class="px-4 py-3 text-center text-gray-700">{{ $item['jumlah'] ?? 0 }}</td>
+                                                    <td class="px-4 py-3 text-right text-gray-700">Rp {{ number_format($item['harga'] ?? 0, 0, ',', '.') }}</td>
+                                                    <td class="px-4 py-3 text-right text-gray-700 font-semibold">Rp {{ number_format(($item['jumlah'] ?? 0) * ($item['harga'] ?? 0), 0, ',', '.') }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
+                                @endif
 
-                                <!-- Jasa -->
+                                <!-- Barang: ATK/Perlengkapan -->
+                                @if($proposal->barang_items && count($proposal->barang_items) > 0)
                                 <div>
-                                    <label class="text-sm font-medium text-gray-500 block mb-2">Jasa</label>
-                                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                                        <p class="text-gray-700 whitespace-pre-wrap">{{ $proposal->jasa }}</p>
+                                    <label class="text-sm font-medium text-gray-500 block mb-2">Barang: ATK/Perlengkapan</label>
+                                    <div class="overflow-x-auto border rounded-lg">
+                                        <table class="w-full text-sm">
+                                            <thead class="bg-gray-100">
+                                                <tr>
+                                                    <th class="px-4 py-3 text-left">Nama Barang</th>
+                                                    <th class="px-4 py-3 text-center">Jumlah</th>
+                                                    <th class="px-4 py-3 text-right">Harga/Satuan</th>
+                                                    <th class="px-4 py-3 text-right">Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($proposal->barang_items as $item)
+                                                <tr class="border-t">
+                                                    <td class="px-4 py-3 text-gray-700">{{ $item['nama'] ?? '-' }}</td>
+                                                    <td class="px-4 py-3 text-center text-gray-700">{{ $item['jumlah'] ?? 0 }}</td>
+                                                    <td class="px-4 py-3 text-right text-gray-700">Rp {{ number_format($item['harga'] ?? 0, 0, ',', '.') }}</td>
+                                                    <td class="px-4 py-3 text-right text-gray-700 font-semibold">Rp {{ number_format(($item['jumlah'] ?? 0) * ($item['harga'] ?? 0), 0, ',', '.') }}</td>
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
-
-                                <!-- Bahan -->
-                                <div>
-                                    <label class="text-sm font-medium text-gray-500 block mb-2">Bahan</label>
-                                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                                        <p class="text-gray-700 whitespace-pre-wrap">{{ $proposal->bahan }}</p>
-                                    </div>
-                                </div>
+                                @endif
 
                                 <!-- Total Anggaran -->
                                 <div class="pt-4 border-t-2 border-gray-200">
@@ -171,6 +219,22 @@
 
                 <!-- Sidebar -->
                 <div class="space-y-6">
+                    <!-- Edit Button for Owner or Admin -->
+                    @if(Auth::user()->id === $proposal->user_id || in_array(Auth::user()->role, ['bem', 'admin']))
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6">
+                            <a href="{{ route('proposals.edit', $proposal) }}"
+                                class="w-full inline-flex justify-center items-center px-4 py-2 bg-yellow-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-700">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Edit Proposal
+                            </a>
+                        </div>
+                    </div>
+                    @endif
+
                     <!-- Status Card -->
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">

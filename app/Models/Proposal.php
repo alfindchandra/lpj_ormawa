@@ -13,13 +13,17 @@ class Proposal extends Model
         'user_id', 'kode_proposal', 'nama_kegiatan', 'deskripsi',
         'tanggal_mulai', 'tanggal_selesai', 'tipe_lokasi', 'tempat', 
         'barang_diperlukan', 'sewa_tempat', 'jasa', 'bahan',
-        'anggaran', 'file_proposal', 'status', 'catatan_bem', 'catatan_admin'
+        'anggaran', 'file_proposal', 'status', 'catatan_bem', 'catatan_admin',
+        'internal_items', 'external_items', 'barang_items'
     ];
 
     protected $casts = [
         'tanggal_mulai' => 'date',
         'tanggal_selesai' => 'date',
-        'anggaran' => 'decimal:2'
+        'anggaran' => 'decimal:2',
+        'internal_items' => 'array',
+        'external_items' => 'array',
+        'barang_items' => 'array'
     ];
 
     public function user(): BelongsTo

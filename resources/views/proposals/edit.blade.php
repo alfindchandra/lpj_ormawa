@@ -1,16 +1,28 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Ajukan Proposal Kegiatan
+            Edit Proposal: {{ $proposal->kode_proposal }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+            @if ($errors->any())
+            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                <p class="font-semibold">Terjadi kesalahan:</p>
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
-                    <form method="POST" action="{{ route('proposals.store') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('proposals.update', $proposal) }}" enctype="multipart/form-data">
                         @csrf
+                        @method('PUT')
 
                         <!-- Nama Kegiatan -->
                         <div class="mb-6">
@@ -19,7 +31,7 @@
                             </label>
                             <input type="text" name="nama_kegiatan" id="nama_kegiatan"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                value="{{ old('nama_kegiatan') }}" required>
+                                value="{{ old('nama_kegiatan', $proposal->nama_kegiatan) }}" required>
                             @error('nama_kegiatan')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -32,7 +44,7 @@
                             </label>
                             <textarea name="deskripsi" id="deskripsi" rows="4"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                required>{{ old('deskripsi') }}</textarea>
+                                required>{{ old('deskripsi', $proposal->deskripsi) }}</textarea>
                             @error('deskripsi')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -46,7 +58,7 @@
                                 </label>
                                 <input type="date" name="tanggal_mulai" id="tanggal_mulai"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    value="{{ old('tanggal_mulai') }}" required>
+                                    value="{{ old('tanggal_mulai', $proposal->tanggal_mulai->format('Y-m-d')) }}" required>
                                 @error('tanggal_mulai')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -58,7 +70,7 @@
                                 </label>
                                 <input type="date" name="tanggal_selesai" id="tanggal_selesai"
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                    value="{{ old('tanggal_selesai') }}" required>
+                                    value="{{ old('tanggal_selesai', $proposal->tanggal_selesai->format('Y-m-d')) }}" required>
                                 @error('tanggal_selesai')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -74,9 +86,9 @@
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 required>
                                 <option value="">-- Pilih Tipe Lokasi --</option>
-                                <option value="internal" {{ old('tipe_lokasi') == 'internal' ? 'selected' : '' }}>
+                                <option value="internal" {{ old('tipe_lokasi', $proposal->tipe_lokasi) == 'internal' ? 'selected' : '' }}>
                                     Internal Kampus</option>
-                                <option value="eksternal" {{ old('tipe_lokasi') == 'eksternal' ? 'selected' : '' }}>
+                                <option value="eksternal" {{ old('tipe_lokasi', $proposal->tipe_lokasi) == 'eksternal' ? 'selected' : '' }}>
                                     Eksternal Kampus</option>
                             </select>
                             @error('tipe_lokasi')
@@ -91,7 +103,7 @@
                             </label>
                             <input type="text" name="tempat" id="tempat"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                placeholder="Masukkan nama tempat" value="{{ old('tempat') }}" required>
+                                placeholder="Masukkan nama tempat" value="{{ old('tempat', $proposal->tempat) }}" required>
                             @error('tempat')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -113,7 +125,7 @@
                                     </thead>
                                     <tbody id="internal-items">
                                         @php
-                                            $internals = old('internal_items', [['item' => '', 'harga' => '']]);
+                                            $internals = old('internal_items', $proposal->internal_items ?? [['item' => '', 'harga' => '']]);
                                         @endphp
                                         @foreach($internals as $index => $item)
                                         <tr class="border-t">
@@ -160,7 +172,7 @@
                                     </thead>
                                     <tbody id="external-items">
                                         @php
-                                            $externals = old('external_items', [['jasa' => '', 'jumlah' => 1, 'harga' => '']]);
+                                            $externals = old('external_items', $proposal->external_items ?? [['jasa' => '', 'jumlah' => 1, 'harga' => '']]);
                                         @endphp
                                         @foreach($externals as $index => $item)
                                         <tr class="border-t">
@@ -218,7 +230,7 @@
                                     </thead>
                                     <tbody id="barang-items">
                                         @php
-                                            $barangs = old('barang_items', [['nama' => '', 'jumlah' => 1, 'harga' => '']]);
+                                            $barangs = old('barang_items', $proposal->barang_items ?? [['nama' => '', 'jumlah' => 1, 'harga' => '']]);
                                         @endphp
                                         @foreach($barangs as $index => $item)
                                         <tr class="border-t">
@@ -265,7 +277,7 @@
                             </label>
                             <input type="number" name="anggaran" id="anggaran" step="0.01" min="0"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                placeholder="Masukkan total anggaran dalam rupiah" value="{{ old('anggaran') }}"
+                                placeholder="Masukkan total anggaran dalam rupiah" value="{{ old('anggaran', $proposal->anggaran) }}"
                                 required>
                             @error('anggaran')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -275,20 +287,22 @@
                         <!-- File Proposal -->
                         <div class="mb-6">
                             <label for="file_proposal" class="block text-sm font-medium text-gray-700 mb-2">
-                                File Proposal (PDF, Max 5MB) <span class="text-red-500">*</span>
+                                File Proposal (PDF, Max 5MB)
                             </label>
+                            @if($proposal->file_proposal)
+                            <p class="text-sm text-gray-600 mb-2">File saat ini: <a href="{{ Storage::url($proposal->file_proposal) }}" target="_blank" class="text-blue-600">Lihat File</a></p>
+                            @endif
                             <input type="file" name="file_proposal" id="file_proposal" accept=".pdf"
-                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                                required>
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                             @error('file_proposal')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
-                            <p class="mt-1 text-xs text-gray-500">Format: PDF, Maksimal 5MB</p>
+                            <p class="mt-1 text-xs text-gray-500">Format: PDF, Maksimal 5MB (Opsional jika tidak diubah)</p>
                         </div>
 
                         <!-- Buttons -->
                         <div class="flex items-center justify-end gap-4">
-                            <a href="{{ route('proposals.index') }}"
+                            <a href="{{ route('proposals.show', $proposal) }}"
                                 class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400">
                                 Batal
                             </a>
@@ -296,9 +310,9 @@
                                 class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 4v16m8-8H4" />
+                                        d="M5 13l4 4L19 7" />
                                 </svg>
-                                Ajukan Proposal
+                                Simpan Perubahan
                             </button>
                         </div>
                     </form>
@@ -307,194 +321,134 @@
         </div>
     </div>
 
-   <script>
-    // Fungsi pembantu untuk menghitung total keseluruhan anggaran
-    function updateTotalAnggaran() {
-        let total = 0;
+    <script>
+        // INTERNAL functions
+        function addInternalRow() {
+            const tbody = document.getElementById('internal-items');
+            const index = tbody.children.length;
+            const row = document.createElement('tr');
+            row.className = 'border-t';
+            row.innerHTML = `
+                <td class="px-4 py-3">
+                    <input type="text" name="internal_items[${index}][item]"
+                        class="w-full px-2 py-2 border rounded"
+                        placeholder="Contoh: Kebersihan, Dekorasi">
+                </td>
+                <td class="px-4 py-3">
+                    <input type="number" name="internal_items[${index}][harga]"
+                        class="w-full px-2 py-2 border rounded" step="0.01" min="0"
+                        placeholder="Rp">
+                </td>
+                <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-red-600 hover:text-red-800"
+                        onclick="removeInternalRow(this)">Hapus</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        }
 
-        // 1. Hitung dari Internal Items (Langsung ambil nilai harga karena jumlahnya dianggap 1)
-        document.querySelectorAll('#internal-items tr').forEach(row => {
-            const hargaInput = row.querySelector('input[name*="[harga]"]');
-            if (hargaInput) {
-                total += parseFloat(hargaInput.value) || 0;
-            }
-        });
+        function removeInternalRow(btn) {
+            btn.closest('tr').remove();
+        }
 
-        // 2. Hitung dari External Items (Jumlah * Harga)
-        document.querySelectorAll('#external-items tr').forEach(row => {
+        // EXTERNAL functions
+        function addExternalRow() {
+            const tbody = document.getElementById('external-items');
+            const index = tbody.children.length;
+            const row = document.createElement('tr');
+            row.className = 'border-t';
+            row.innerHTML = `
+                <td class="px-4 py-3">
+                    <input type="text" name="external_items[${index}][jasa]"
+                        class="w-full px-2 py-2 border rounded"
+                        placeholder="Contoh: Jasa MC, Catering, Photography">
+                </td>
+                <td class="px-4 py-3">
+                    <input type="number" name="external_items[${index}][jumlah]"
+                        class="w-full px-2 py-2 border rounded jumlah-input" 
+                        min="1" value="1" onchange="calculateSubtotal(this)">
+                </td>
+                <td class="px-4 py-3">
+                    <input type="number" name="external_items[${index}][harga]"
+                        class="w-full px-2 py-2 border rounded harga-input" 
+                        step="0.01" min="0" placeholder="Rp" onchange="calculateSubtotal(this)">
+                </td>
+                <td class="px-4 py-3 text-right pr-4">
+                    <span class="subtotal-display">Rp 0</span>
+                </td>
+                <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-red-600 hover:text-red-800"
+                        onclick="removeExternalRow(this)">Hapus</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        function removeExternalRow(btn) {
+            btn.closest('tr').remove();
+        }
+
+        // BARANG functions
+        function addBarangRow() {
+            const tbody = document.getElementById('barang-items');
+            const index = tbody.children.length;
+            const row = document.createElement('tr');
+            row.className = 'border-t';
+            row.innerHTML = `
+                <td class="px-4 py-3">
+                    <input type="text" name="barang_items[${index}][nama]"
+                        class="w-full px-2 py-2 border rounded"
+                        placeholder="Contoh: Kertas Banner, Spidol, Tinta">
+                </td>
+                <td class="px-4 py-3">
+                    <input type="number" name="barang_items[${index}][jumlah]"
+                        class="w-full px-2 py-2 border rounded jumlah-input" 
+                        min="1" value="1" onchange="calculateSubtotal(this)">
+                </td>
+                <td class="px-4 py-3">
+                    <input type="number" name="barang_items[${index}][harga]"
+                        class="w-full px-2 py-2 border rounded harga-input" 
+                        step="0.01" min="0" placeholder="Rp" onchange="calculateSubtotal(this)">
+                </td>
+                <td class="px-4 py-3 text-right pr-4">
+                    <span class="subtotal-display">Rp 0</span>
+                </td>
+                <td class="px-4 py-3 text-center">
+                    <button type="button" class="text-red-600 hover:text-red-800"
+                        onclick="removeBarangRow(this)">Hapus</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        function removeBarangRow(btn) {
+            btn.closest('tr').remove();
+        }
+
+        // Calculate subtotal for external and barang rows
+        function calculateSubtotal(input) {
+            const row = input.closest('tr');
             const jumlahInput = row.querySelector('.jumlah-input');
             const hargaInput = row.querySelector('.harga-input');
-            if (jumlahInput && hargaInput) {
+            const subtotalDisplay = row.querySelector('.subtotal-display');
+
+            if (jumlahInput && hargaInput && subtotalDisplay) {
                 const jumlah = parseInt(jumlahInput.value) || 0;
                 const harga = parseFloat(hargaInput.value) || 0;
-                total += jumlah * harga;
+                const subtotal = jumlah * harga;
+                
+                subtotalDisplay.textContent = 'Rp ' + subtotal.toLocaleString('id-ID', { maximumFractionDigits: 0 });
             }
-        });
-
-        // 3. Hitung dari Barang Items (Jumlah * Harga)
-        document.querySelectorAll('#barang-items tr').forEach(row => {
-            const jumlahInput = row.querySelector('.jumlah-input');
-            const hargaInput = row.querySelector('.harga-input');
-            if (jumlahInput && hargaInput) {
-                const jumlah = parseInt(jumlahInput.value) || 0;
-                const harga = parseFloat(hargaInput.value) || 0;
-                total += jumlah * harga;
-            }
-        });
-
-        // Masukkan hasil total ke input anggaran (pembulatan 2 angka di belakang koma untuk step="0.01")
-        const anggaranInput = document.getElementById('anggaran');
-        if (anggaranInput) {
-            anggaranInput.value = total.toFixed(0);
         }
-    }
 
-    // INTERNAL functions
-    function addInternalRow() {
-        const tbody = document.getElementById('internal-items');
-        const index = tbody.children.length;
-        const row = document.createElement('tr');
-        row.className = 'border-t';
-        row.innerHTML = `
-            <td class="px-4 py-3">
-                <input type="text" name="internal_items[${index}][item]"
-                    class="w-full px-2 py-2 border rounded"
-                    placeholder="Contoh: Kebersihan, Dekorasi">
-            </td>
-            <td class="px-4 py-3">
-                <input type="number" name="internal_items[${index}][harga]"
-                    class="w-full px-2 py-2 border rounded harga-internal-input" step="0.01" min="0"
-                    placeholder="Rp" onchange="updateTotalAnggaran()">
-            </td>
-            <td class="px-4 py-3 text-center">
-                <button type="button" class="text-red-600 hover:text-red-800"
-                    onclick="removeInternalRow(this)">Hapus</button>
-            </td>
-        `;
-        tbody.appendChild(row);
-    }
-
-    function removeInternalRow(btn) {
-        btn.closest('tr').remove();
-        updateTotalAnggaran(); // Update total setelah baris dihapus
-    }
-
-    // EXTERNAL functions
-    function addExternalRow() {
-        const tbody = document.getElementById('external-items');
-        const index = tbody.children.length;
-        const row = document.createElement('tr');
-        row.className = 'border-t';
-        row.innerHTML = `
-            <td class="px-4 py-3">
-                <input type="text" name="external_items[${index}][jasa]"
-                    class="w-full px-2 py-2 border rounded"
-                    placeholder="Contoh: Jasa MC, Catering, Photography">
-            </td>
-            <td class="px-4 py-3">
-                <input type="number" name="external_items[${index}][jumlah]"
-                    class="w-full px-2 py-2 border rounded jumlah-input" 
-                    min="1" value="1" onchange="calculateSubtotal(this)">
-            </td>
-            <td class="px-4 py-3">
-                <input type="number" name="external_items[${index}][harga]"
-                    class="w-full px-2 py-2 border rounded harga-input" 
-                    step="0.01" min="0" placeholder="Rp" onchange="calculateSubtotal(this)">
-            </td>
-            <td class="px-4 py-3 text-right pr-4">
-                <span class="subtotal-display">Rp 0</span>
-            </td>
-            <td class="px-4 py-3 text-center">
-                <button type="button" class="text-red-600 hover:text-red-800"
-                    onclick="removeExternalRow(this)">Hapus</button>
-            </td>
-        `;
-        tbody.appendChild(row);
-    }
-
-    function removeExternalRow(btn) {
-        btn.closest('tr').remove();
-        updateTotalAnggaran(); // Update total setelah baris dihapus
-    }
-
-    // BARANG functions
-    function addBarangRow() {
-        const tbody = document.getElementById('barang-items');
-        const index = tbody.children.length;
-        const row = document.createElement('tr');
-        row.className = 'border-t';
-        row.innerHTML = `
-            <td class="px-4 py-3">
-                <input type="text" name="barang_items[${index}][nama]"
-                    class="w-full px-2 py-2 border rounded"
-                    placeholder="Contoh: Kertas Banner, Spidol, Tinta">
-            </td>
-            <td class="px-4 py-3">
-                <input type="number" name="barang_items[${index}][jumlah]"
-                    class="w-full px-2 py-2 border rounded jumlah-input" 
-                    min="1" value="1" onchange="calculateSubtotal(this)">
-            </td>
-            <td class="px-4 py-3">
-                <input type="number" name="barang_items[${index}][harga]"
-                    class="w-full px-2 py-2 border rounded harga-input" 
-                    step="0.01" min="0" placeholder="Rp" onchange="calculateSubtotal(this)">
-            </td>
-            <td class="px-4 py-3 text-right pr-4">
-                <span class="subtotal-display">Rp 0</span>
-            </td>
-            <td class="px-4 py-3 text-center">
-                <button type="button" class="text-red-600 hover:text-red-800"
-                    onclick="removeBarangRow(this)">Hapus</button>
-            </td>
-        `;
-        tbody.appendChild(row);
-    }
-
-    function removeBarangRow(btn) {
-        btn.closest('tr').remove();
-        updateTotalAnggaran(); // Update total setelah baris dihapus
-    }
-
-    // Calculate subtotal untuk external dan barang rows
-    function calculateSubtotal(input) {
-        const row = input.closest('tr');
-        const jumlahInput = row.querySelector('.jumlah-input');
-        const hargaInput = row.querySelector('.harga-input');
-        const subtotalDisplay = row.querySelector('.subtotal-display');
-
-        if (jumlahInput && hargaInput && subtotalDisplay) {
-            const jumlah = parseInt(jumlahInput.value) || 0;
-            const harga = parseFloat(hargaInput.value) || 0;
-            const subtotal = jumlah * harga;
-            
-            subtotalDisplay.textContent = 'Rp ' + subtotal.toLocaleString('id-ID', { maximumFractionDigits: 0 });
-        }
-        
-        // Panggil perhitungan total anggaran setelah subtotal baris berubah
-        updateTotalAnggaran();
-    }
-
-    // Hitung ulang semua subtotal dan total anggaran saat halaman pertama kali dimuat (Old Data handling)
-    document.addEventListener('DOMContentLoaded', function() {
-        // Tambah event listener manual untuk input internal bawaan dari `old()` Laravel
-        document.querySelectorAll('#internal-items tr').forEach(row => {
-            const hargaInput = row.querySelector('input[name*="[harga]"]');
-            if (hargaInput) {
-                hargaInput.addEventListener('change', updateTotalAnggaran);
-            }
+        // Calculate all subtotals on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('#external-items tr, #barang-items tr').forEach(row => {
+                const hargaInput = row.querySelector('.harga-input');
+                if (hargaInput) {
+                    calculateSubtotal(hargaInput);
+                }
+            });
         });
-
-        // Hitung subtotal & total untuk tabel external dan barang bawaan dari `old()` Laravel
-        document.querySelectorAll('#external-items tr, #barang-items tr').forEach(row => {
-            const hargaInput = row.querySelector('.harga-input');
-            if (hargaInput) {
-                calculateSubtotal(hargaInput);
-            }
-        });
-        
-        // Terakhir, pastikan total terhitung di awal
-        updateTotalAnggaran();
-    });
-</script>
-
+    </script>
 </x-app-layout>
