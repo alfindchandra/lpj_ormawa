@@ -378,7 +378,7 @@
         btn.closest('tr').remove();
         updateTotalAnggaran(); // Update total setelah baris dihapus
     }
-
+ 
     // EXTERNAL functions
     function addExternalRow() {
         const tbody = document.getElementById('external-items');
