@@ -14,26 +14,22 @@ class ArchiveController extends Controller
     {
         $periods = Period::orderBy('tahun_mulai', 'desc')->get();
         $activePeriod = Period::where('is_active', true)->first();
-        
+
         return view('archives.index', compact('periods', 'activePeriod'));
     }
 
     public function show(Period $period)
     {
-        $proposals = Proposal::whereHas('user', function($q) use ($period) {
-            // Filter berdasarkan created_at dalam rentang periode
-            $startDate = $period->tahun_mulai . '-01-01';
-            $endDate = $period->tahun_selesai . '-12-31';
-        })->whereBetween('created_at', [
-            $period->tahun_mulai . '-01-01',
-            $period->tahun_selesai . '-12-31'
-        ])->with(['user', 'activity'])->get();
+        // Gunakan period_id untuk filter yang akurat
+        $proposals = Proposal::where('period_id', $period->id)
+            ->with(['user', 'activity'])
+            ->get();
 
         $statistics = [
-            'total_proposals' => $proposals->count(),
-            'approved' => $proposals->where('status', 'approved_admin')->count(),
-            'rejected' => $proposals->where('status', 'rejected')->count(),
-            'total_activities' => Activity::whereIn('proposal_id', $proposals->pluck('id'))->count(),
+            'total_proposals'      => $proposals->count(),
+            'approved'             => $proposals->where('status', 'approved_admin')->count(),
+            'rejected'             => $proposals->where('status', 'rejected')->count(),
+            'total_activities'     => Activity::whereIn('proposal_id', $proposals->pluck('id'))->count(),
             'completed_activities' => Activity::whereIn('proposal_id', $proposals->pluck('id'))
                 ->where('status', 'completed')->count(),
         ];
@@ -43,23 +39,21 @@ class ArchiveController extends Controller
 
     public function exportPDF(Period $period)
     {
-        $proposals = Proposal::whereBetween('created_at', [
-            $period->tahun_mulai . '-01-01',
-            $period->tahun_selesai . '-12-31'
-        ])->with(['user', 'activity.lpj'])->get();
+        $proposals = Proposal::where('period_id', $period->id)
+            ->with(['user', 'activity.lpj'])
+            ->get();
 
         $statistics = [
             'total_proposals' => $proposals->count(),
-            'approved' => $proposals->where('status', 'approved_admin')->count(),
-            'rejected' => $proposals->where('status', 'rejected')->count(),
-            'total_budget' => $proposals->where('status', 'approved_admin')->sum('anggaran'),
+            'approved'        => $proposals->where('status', 'approved_admin')->count(),
+            'rejected'        => $proposals->where('status', 'rejected')->count(),
+            'total_budget'    => $proposals->where('status', 'approved_admin')->sum('anggaran'),
         ];
 
         $pdf = Pdf::loadView('archives.pdf-report', compact('period', 'proposals', 'statistics'));
-        
-        // Sanitize filename by removing invalid characters
+
         $sanitizedName = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '_', $period->nama_periode);
-        
+
         return $pdf->download('Laporan_Kegiatan_' . $sanitizedName . '.pdf');
     }
 }

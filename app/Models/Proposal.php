@@ -5,13 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Proposal extends Model
 {
     protected $fillable = [
-        'user_id', 'kode_proposal', 'nama_kegiatan', 'deskripsi',
-        'tanggal_mulai', 'tanggal_selesai', 'tipe_lokasi', 'tempat', 
+        'user_id', 'period_id', 'kode_proposal', 'nama_kegiatan', 'deskripsi',
+        'tanggal_mulai', 'tanggal_selesai', 'tipe_lokasi', 'tempat',
         'barang_diperlukan', 'sewa_tempat', 'jasa', 'bahan',
         'anggaran', 'file_proposal', 'status', 'catatan_bem', 'catatan_admin',
         'internal_items', 'external_items', 'barang_items'
@@ -31,6 +30,11 @@ class Proposal extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function period(): BelongsTo
+    {
+        return $this->belongsTo(Period::class);
+    }
+
     public function activity(): HasOne
     {
         return $this->hasOne(Activity::class);
@@ -44,9 +48,9 @@ class Proposal extends Model
             ->whereMonth('created_at', $month)
             ->latest()
             ->first();
-        
+
         $number = $latest ? intval(substr($latest->kode_proposal, -4)) + 1 : 1;
-        
+
         return sprintf('PRO-%s%s-%04d', $year, $month, $number);
     }
 }
