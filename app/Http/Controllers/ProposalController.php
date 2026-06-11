@@ -247,4 +247,20 @@ class ProposalController extends Controller
 
         return redirect()->back()->with('success', 'Proposal ditolak');
     }
+    public function destroy(Proposal $proposal)
+    {
+        $user = Auth::user();
+        if ($user->id !== $proposal->user_id && !in_array($user->role, ['bem', 'admin'])) {
+            abort(403, 'Anda tidak berhak menghapus proposal ini.');
+        }
+
+        if ($proposal->file_proposal) {
+            Storage::disk('public')->delete($proposal->file_proposal);
+        }
+
+        $proposal->delete();
+
+        return redirect()->route('proposals.index')
+            ->with('success', 'Proposal berhasil dihapus');
+    }
 }
