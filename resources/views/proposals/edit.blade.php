@@ -24,6 +24,36 @@
                         @csrf
                         @method('PUT')
 
+                        <div class="mb-6">
+                            <label for="period_id" class="block text-sm font-medium text-gray-700 mb-2">
+                                Periode Kepengurusan <span class="text-red-500">*</span>
+                            </label>
+                            @if($periods->isEmpty())
+                                <div class="p-4 bg-yellow-50 border border-yellow-300 rounded-md text-yellow-800 text-sm">
+                                    Belum ada periode yang tersedia. Hubungi admin untuk menambahkan periode.
+                                </div>
+                            @else
+                            <select name="period_id" id="period_id" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option value="">-- Pilih Periode --</option>
+                                @foreach($periods as $period)
+                                <option value="{{ $period->id }}"
+                                    {{ old('period_id', $activePeriod?->id) == $period->id ? 'selected' : '' }}>
+                                    {{ $period->nama_periode }}
+                                    ({{ $period->tahun_mulai }}/{{ $period->tahun_selesai }})
+                                    @if($period->is_active) — Aktif @endif
+                                </option>
+                                @endforeach
+                            </select>
+                            @endif
+                            @error('period_id')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            <p class="mt-1 text-xs text-gray-500">
+                                Periode aktif otomatis dipilih. Anda bisa menggantinya jika perlu.
+                            </p>
+                        </div>
+
                         <!-- Nama Kegiatan -->
                         <div class="mb-6">
                             <label for="nama_kegiatan" class="block text-sm font-medium text-gray-700 mb-2">

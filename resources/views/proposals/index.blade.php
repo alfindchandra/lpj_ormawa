@@ -6,7 +6,7 @@
             </h2>
             @if(in_array(Auth::user()->role, ['ormawa', 'bem']))
             <a href="{{ route('proposals.create') }}"
-                class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 transition duration-150 ease-in-out">
+                class="inline-flex items-center px-4 py-2 mr-4 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 transition duration-150 ease-in-out">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
@@ -162,16 +162,7 @@
                                             </svg>
                                         </a>
 
-                                        <!-- Edit (Icon Pensil) -->
-                                        @if(in_array(Auth::user()->role, ['ormawa', 'bem']) && $proposal->status === 'pending')
-                                        <a href="{{ route('proposals.edit', $proposal) }}" 
-                                           class="text-green-600 hover:text-green-900 transition-colors duration-150" 
-                                           title="Edit">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                                            </svg>
-                                        </a>
-                                        @endif
+                                        
 
                                         <!-- Hapus (Icon Tempat Sampah) -->
                                         @if(Auth::user()->role === 'ormawa' && $proposal->status === 'pending')

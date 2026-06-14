@@ -123,8 +123,9 @@ class ProposalController extends Controller
         }
 
         $periods = Period::orderBy('is_active', 'desc')->orderBy('tahun_mulai', 'desc')->get();
+        $activePeriod = Period::where('is_active', true)->first();
 
-        return view('proposals.edit', compact('proposal', 'periods'));
+        return view('proposals.edit', compact('proposal', 'periods', 'activePeriod'));
     }
 
     public function update(Request $request, Proposal $proposal)

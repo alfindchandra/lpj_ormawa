@@ -220,7 +220,7 @@
                 <!-- Sidebar -->
                 <div class="space-y-6">
                     <!-- Edit Button for Owner or Admin -->
-                    @if(Auth::user()->id === $proposal->user_id || in_array(Auth::user()->role, ['bem', 'admin']))
+                    @if(Auth::user()->id === $proposal->user_id)
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">
                             <a href="{{ route('proposals.edit', $proposal) }}"
