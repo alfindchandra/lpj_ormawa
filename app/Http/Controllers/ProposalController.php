@@ -54,9 +54,10 @@ class ProposalController extends Controller
             'tempat'         => 'required|string|max:255',
             'anggaran'       => 'required|numeric|min:0',
             'file_proposal'  => 'required|file|mimes:pdf|max:5120',
-            'internal_items'              => 'nullable|array',
-            'internal_items.*.item'       => 'nullable|string',
-            'internal_items.*.harga'      => 'nullable|numeric|min:0',
+            'barang_internal_items'          => 'nullable|array',
+            'barang_internal_items.*.nama'   => 'nullable|string',
+            'barang_internal_items.*.jumlah' => 'nullable|numeric|min:1',
+            'barang_internal_items.*.harga'  => 'nullable|numeric|min:0',
             'external_items'              => 'nullable|array',
             'external_items.*.jasa'       => 'nullable|string',
             'external_items.*.jumlah'     => 'nullable|numeric|min:1',
@@ -135,6 +136,7 @@ class ProposalController extends Controller
             abort(403, 'Anda tidak berhak mengupdate proposal ini.');
         }
 
+        // --- Bagian Validasi di store() dan update() ---
         $validated = $request->validate([
             'period_id'      => 'required|exists:periods,id',
             'nama_kegiatan'  => 'required|string|max:255',
@@ -144,32 +146,28 @@ class ProposalController extends Controller
             'tipe_lokasi'    => 'required|in:internal,eksternal',
             'tempat'         => 'required|string|max:255',
             'anggaran'       => 'required|numeric|min:0',
-            'file_proposal'  => 'nullable|file|mimes:pdf|max:5120',
-            'internal_items'              => 'nullable|array',
-            'internal_items.*.item'       => 'nullable|string',
-            'internal_items.*.harga'      => 'nullable|numeric|min:0',
-            'external_items'              => 'nullable|array',
-            'external_items.*.jasa'       => 'nullable|string',
-            'external_items.*.jumlah'     => 'nullable|numeric|min:1',
-            'external_items.*.harga'      => 'nullable|numeric|min:0',
-            'barang_items'                => 'nullable|array',
-            'barang_items.*.nama'         => 'nullable|string',
-            'barang_items.*.jumlah'       => 'nullable|numeric|min:1',
-            'barang_items.*.harga'        => 'nullable|numeric|min:0',
+            'file_proposal'  => $request->isMethod('html') ? 'required|file|mimes:pdf|max:5120' : 'nullable|file|mimes:pdf|max:5120', // sesuaikan store/update
+            
+            // Validasi baru untuk internal_items (Sama seperti eksternal)
+            'internal_items'          => 'nullable|array',
+            'internal_items.*.nama'   => 'nullable|string',
+            'internal_items.*.jumlah' => 'nullable|numeric|min:1',
+            'internal_items.*.harga'  => 'nullable|numeric|min:0',
+
+            'external_items'          => 'nullable|array',
+            'external_items.*.jasa'   => 'nullable|string',
+            'external_items.*.jumlah' => 'nullable|numeric|min:1',
+            'external_items.*.harga'  => 'nullable|numeric|min:0',
+            
+            'barang_items'            => 'nullable|array',
+            'barang_items.*.nama'     => 'nullable|string',
+            'barang_items.*.jumlah'   => 'nullable|numeric|min:1',
+            'barang_items.*.harga'    => 'nullable|numeric|min:0',
         ]);
 
-        $filePath = $proposal->file_proposal;
-        if ($request->hasFile('file_proposal')) {
-            if ($proposal->file_proposal) {
-                Storage::disk('public')->delete($proposal->file_proposal);
-            }
-            $file = $request->file('file_proposal');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $filePath = $file->storeAs('proposals', $fileName, 'public');
-        }
-
+        // --- Bagian Array Filtering sebelum create/update ---
         $internal_items = array_filter($request->input('internal_items', []), function ($item) {
-            return !empty($item['item']) || !empty($item['harga']);
+            return !empty($item['nama']) || !empty($item['jumlah']) || !empty($item['harga']);
         });
 
         $external_items = array_filter($request->input('external_items', []), function ($item) {
@@ -179,7 +177,6 @@ class ProposalController extends Controller
         $barang_items = array_filter($request->input('barang_items', []), function ($item) {
             return !empty($item['nama']) || !empty($item['jumlah']) || !empty($item['harga']);
         });
-
         $proposal->update([
             'period_id'      => $validated['period_id'],
             'nama_kegiatan'  => $validated['nama_kegiatan'],

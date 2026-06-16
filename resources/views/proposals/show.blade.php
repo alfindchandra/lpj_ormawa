@@ -97,23 +97,28 @@
                             <h3 class="text-lg font-semibold mb-4 pb-2 border-b">Detail Anggaran</h3>
 
                             <div class="space-y-6">
-                                <!-- Internal: Kebersihan dll -->
                                 @if($proposal->internal_items && count($proposal->internal_items) > 0)
                                 <div>
-                                    <label class="text-sm font-medium text-gray-500 block mb-2">Internal: Kebersihan dll</label>
+                                    <label class="text-sm font-medium text-gray-500 block mb-2">Internal: Anggaran Perlengkapan & Kegiatan</label>
                                     <div class="overflow-x-auto border rounded-lg">
                                         <table class="w-full text-sm">
                                             <thead class="bg-gray-100">
                                                 <tr>
-                                                    <th class="px-4 py-3 text-left">Item</th>
-                                                    <th class="px-4 py-3 text-right">Harga</th>
+                                                    <th class="px-4 py-3 text-left">Nama Barang / Item</th>
+                                                    <th class="px-4 py-3 text-center">Jumlah</th>
+                                                    <th class="px-4 py-3 text-right">Harga/Satuan</th>
+                                                    <th class="px-4 py-3 text-right">Subtotal</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach($proposal->internal_items as $item)
                                                 <tr class="border-t">
-                                                    <td class="px-4 py-3 text-gray-700">{{ $item['item'] ?? '-' }}</td>
+                                                    <td class="px-4 py-3 text-gray-700">{{ $item['nama'] ?? '-' }}</td>
+                                                    <td class="px-4 py-3 text-center text-gray-700">{{ $item['jumlah'] ?? 1 }}</td>
                                                     <td class="px-4 py-3 text-right text-gray-700">Rp {{ number_format($item['harga'] ?? 0, 0, ',', '.') }}</td>
+                                                    <td class="px-4 py-3 text-right text-gray-700 font-semibold">
+                                                        Rp {{ number_format(($item['jumlah'] ?? 1) * ($item['harga'] ?? 0), 0, ',', '.') }}
+                                                    </td>
                                                 </tr>
                                                 @endforeach
                                             </tbody>
@@ -122,7 +127,6 @@
                                 </div>
                                 @endif
 
-                                <!-- External: Jasa MC dll -->
                                 @if($proposal->external_items && count($proposal->external_items) > 0)
                                 <div>
                                     <label class="text-sm font-medium text-gray-500 block mb-2">External: Jasa MC dll</label>
@@ -140,9 +144,11 @@
                                                 @foreach($proposal->external_items as $item)
                                                 <tr class="border-t">
                                                     <td class="px-4 py-3 text-gray-700">{{ $item['jasa'] ?? '-' }}</td>
-                                                    <td class="px-4 py-3 text-center text-gray-700">{{ $item['jumlah'] ?? 0 }}</td>
+                                                    <td class="px-4 py-3 text-center text-gray-700">{{ $item['jumlah'] ?? 1 }}</td>
                                                     <td class="px-4 py-3 text-right text-gray-700">Rp {{ number_format($item['harga'] ?? 0, 0, ',', '.') }}</td>
-                                                    <td class="px-4 py-3 text-right text-gray-700 font-semibold">Rp {{ number_format(($item['jumlah'] ?? 0) * ($item['harga'] ?? 0), 0, ',', '.') }}</td>
+                                                    <td class="px-4 py-3 text-right text-gray-700 font-semibold">
+                                                        Rp {{ number_format(($item['jumlah'] ?? 1) * ($item['harga'] ?? 0), 0, ',', '.') }}
+                                                    </td>
                                                 </tr>
                                                 @endforeach
                                             </tbody>
@@ -151,7 +157,6 @@
                                 </div>
                                 @endif
 
-                                <!-- Barang: ATK/Perlengkapan -->
                                 @if($proposal->barang_items && count($proposal->barang_items) > 0)
                                 <div>
                                     <label class="text-sm font-medium text-gray-500 block mb-2">Barang: ATK/Perlengkapan</label>
@@ -169,9 +174,11 @@
                                                 @foreach($proposal->barang_items as $item)
                                                 <tr class="border-t">
                                                     <td class="px-4 py-3 text-gray-700">{{ $item['nama'] ?? '-' }}</td>
-                                                    <td class="px-4 py-3 text-center text-gray-700">{{ $item['jumlah'] ?? 0 }}</td>
+                                                    <td class="px-4 py-3 text-center text-gray-700">{{ $item['jumlah'] ?? 1 }}</td>
                                                     <td class="px-4 py-3 text-right text-gray-700">Rp {{ number_format($item['harga'] ?? 0, 0, ',', '.') }}</td>
-                                                    <td class="px-4 py-3 text-right text-gray-700 font-semibold">Rp {{ number_format(($item['jumlah'] ?? 0) * ($item['harga'] ?? 0), 0, ',', '.') }}</td>
+                                                    <td class="px-4 py-3 text-right text-gray-700 font-semibold">
+                                                        Rp {{ number_format(($item['jumlah'] ?? 1) * ($item['harga'] ?? 0), 0, ',', '.') }}
+                                                    </td>
                                                 </tr>
                                                 @endforeach
                                             </tbody>
@@ -180,13 +187,10 @@
                                 </div>
                                 @endif
 
-                                <!-- Total Anggaran -->
                                 <div class="pt-4 border-t-2 border-gray-200">
-                                    <div
-                                        class="flex justify-between items-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                    <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg border border-blue-200">
                                         <label class="text-sm font-semibold text-blue-900">Total Anggaran</label>
-                                        <p class="text-2xl font-bold text-blue-900">Rp
-                                            {{ number_format($proposal->anggaran, 0, ',', '.') }}</p>
+                                        <p class="text-2xl font-bold text-blue-900">Rp {{ number_format($proposal->anggaran, 0, ',', '.') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -254,7 +258,7 @@
                                         </div>
                                     </div>
                                     <div class="flex-1">
-                                        <p class="text-sm font-semibold text-gray-900">Diajukan</p>
+                                        <p class="text-sm font-semibold text-gray-900">Proposal Diajukan</p>
                                         <p class="text-xs text-gray-500">
                                             {{ $proposal->created_at->format('d M Y H:i') }}</p>
                                     </div>
@@ -285,7 +289,7 @@
                                         @endif
                                     </div>
                                     <div class="flex-1">
-                                        <p class="text-sm font-semibold text-gray-900">Persetujuan BEM</p>
+                                        <p class="text-sm font-semibold text-gray-900">Proposal disetujui BEM</p>
                                         <p class="text-xs text-gray-500">
                                             @if(in_array($proposal->status, ['approved_bem', 'approved_admin']))
                                             Disetujui
@@ -315,7 +319,7 @@
                                         @endif
                                     </div>
                                     <div class="flex-1">
-                                        <p class="text-sm font-semibold text-gray-900">Persetujuan Admin</p>
+                                        <p class="text-sm font-semibold text-gray-900">Proposal disetujui Wakil Rektor 1</p>
                                         <p class="text-xs text-gray-500">
                                             {{ $proposal->status === 'approved_admin' ? 'Disetujui' : 'Menunggu' }}
                                         </p>

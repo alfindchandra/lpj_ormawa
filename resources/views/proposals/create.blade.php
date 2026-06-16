@@ -128,159 +128,181 @@
                             @enderror
                         </div>
 
-                        <!-- INTERNAL: Kebersihan dll -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-4">
-                                Internal: Kebersihan dll
-                            </label>
-                            <div class="overflow-x-auto border rounded-lg">
-                                <table class="w-full text-sm">
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th class="px-4 py-3 text-left">Item</th>
-                                            <th class="px-4 py-3 text-right">Harga</th>
-                                            <th class="px-4 py-3 text-center w-20">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="internal-items">
-                                        @php $internals = old('internal_items', [['item' => '', 'harga' => '']]); @endphp
-                                        @foreach($internals as $index => $item)
-                                        <tr class="border-t">
-                                            <td class="px-4 py-3">
-                                                <input type="text" name="internal_items[{{ $index }}][item]"
-                                                    class="w-full px-2 py-2 border rounded"
-                                                    placeholder="Contoh: Kebersihan, Dekorasi"
-                                                    value="{{ $item['item'] ?? '' }}">
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <input type="number" name="internal_items[{{ $index }}][harga]"
-                                                    class="w-full px-2 py-2 border rounded harga-internal-input"
-                                                    step="0.01" min="0" placeholder="Rp"
-                                                    value="{{ $item['harga'] ?? '' }}"
-                                                    onchange="updateTotalAnggaran()">
-                                            </td>
-                                            <td class="px-4 py-3 text-center">
-                                                <button type="button" class="text-red-600 hover:text-red-800"
-                                                    onclick="removeInternalRow(this)">Hapus</button>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            <button type="button" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                onclick="addInternalRow()">+ Tambah Item</button>
-                        </div>
+                        {{-- ===================== SECTION INTERNAL ===================== --}}
+                        <div id="section-internal" style="display:none;">
 
-                        <!-- EXTERNAL: Jasa MC dll -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-4">
-                                External: Jasa MC dll
-                            </label>
-                            <div class="overflow-x-auto border rounded-lg">
-                                <table class="w-full text-sm">
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th class="px-4 py-3 text-left">Jasa/Layanan</th>
-                                            <th class="px-4 py-3 text-center w-24">Jumlah</th>
-                                            <th class="px-4 py-3 text-right">Harga/Satuan</th>
-                                            <th class="px-4 py-3 text-right">Subtotal</th>
-                                            <th class="px-4 py-3 text-center w-20">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="external-items">
-                                        @php $externals = old('external_items', [['jasa' => '', 'jumlah' => 1, 'harga' => '']]); @endphp
-                                        @foreach($externals as $index => $item)
-                                        <tr class="border-t">
-                                            <td class="px-4 py-3">
-                                                <input type="text" name="external_items[{{ $index }}][jasa]"
-                                                    class="w-full px-2 py-2 border rounded"
-                                                    placeholder="Contoh: Jasa MC, Catering"
-                                                    value="{{ $item['jasa'] ?? '' }}">
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <input type="number" name="external_items[{{ $index }}][jumlah]"
-                                                    class="w-full px-2 py-2 border rounded jumlah-input"
-                                                    min="1" value="{{ $item['jumlah'] ?? 1 }}"
-                                                    onchange="calculateSubtotal(this)">
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <input type="number" name="external_items[{{ $index }}][harga]"
-                                                    class="w-full px-2 py-2 border rounded harga-input"
-                                                    step="0.01" min="0" placeholder="Rp"
-                                                    value="{{ $item['harga'] ?? '' }}"
-                                                    onchange="calculateSubtotal(this)">
-                                            </td>
-                                            <td class="px-4 py-3 text-right pr-4">
-                                                <span class="subtotal-display">Rp 0</span>
-                                            </td>
-                                            <td class="px-4 py-3 text-center">
-                                                <button type="button" class="text-red-600 hover:text-red-800"
-                                                    onclick="removeExternalRow(this)">Hapus</button>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-4">
+                                    Internal: Anggaran Perlengkapan & Kegiatan
+                                </label>
+                                <div class="overflow-x-auto border rounded-lg">
+                                    <table class="w-full text-sm">
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left">Nama Barang / Item</th>
+                                                <th class="px-4 py-3 text-center w-24">Jumlah</th>
+                                                <th class="px-4 py-3 text-right">Harga/Satuan</th>
+                                                <th class="px-4 py-3 text-right">Subtotal</th>
+                                                <th class="px-4 py-3 text-center w-20">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="internal-items">
+                                            @php 
+                                                $internals = old('internal_items', [['nama' => '', 'jumlah' => 1, 'harga' => '']]); 
+                                            @endphp
+                                            @foreach($internals as $index => $item)
+                                            <tr class="border-t">
+                                                <td class="px-4 py-3">
+                                                    <input type="text" name="internal_items[{{ $index }}][nama]"
+                                                        class="w-full px-2 py-2 border rounded"
+                                                        placeholder="Contoh: Kebersihan, Konsumsi, Banner"
+                                                        value="{{ $item['nama'] ?? '' }}">
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <input type="number" name="internal_items[{{ $index }}][jumlah]"
+                                                        class="w-full px-2 py-2 border rounded jumlah-input"
+                                                        min="1" value="{{ $item['jumlah'] ?? 1 }}"
+                                                        onchange="calculateSubtotal(this)">
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <input type="number" name="internal_items[{{ $index }}][harga]"
+                                                        class="w-full px-2 py-2 border rounded harga-input"
+                                                        step="0.01" min="0" placeholder="Rp"
+                                                        value="{{ $item['harga'] ?? '' }}"
+                                                        onchange="calculateSubtotal(this)">
+                                                </td>
+                                                <td class="px-4 py-3 text-right pr-4">
+                                                    <span class="subtotal-display">Rp 0</span>
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <button type="button" class="text-red-600 hover:text-red-800"
+                                                        onclick="removeInternalRow(this)">Hapus</button>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button type="button" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    onclick="addInternalRow()">+ Tambah Item Internal</button>
                             </div>
-                            <button type="button" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                onclick="addExternalRow()">+ Tambah Jasa</button>
-                        </div>
 
-                        <!-- BARANG: ATK/Perlengkapan -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-4">
-                                Barang: ATK/Perlengkapan
-                            </label>
-                            <div class="overflow-x-auto border rounded-lg">
-                                <table class="w-full text-sm">
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th class="px-4 py-3 text-left">Nama Barang</th>
-                                            <th class="px-4 py-3 text-center w-24">Jumlah</th>
-                                            <th class="px-4 py-3 text-right">Harga/Satuan</th>
-                                            <th class="px-4 py-3 text-right">Subtotal</th>
-                                            <th class="px-4 py-3 text-center w-20">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="barang-items">
-                                        @php $barangs = old('barang_items', [['nama' => '', 'jumlah' => 1, 'harga' => '']]); @endphp
-                                        @foreach($barangs as $index => $item)
-                                        <tr class="border-t">
-                                            <td class="px-4 py-3">
-                                                <input type="text" name="barang_items[{{ $index }}][nama]"
-                                                    class="w-full px-2 py-2 border rounded"
-                                                    placeholder="Contoh: Kertas Banner, Spidol"
-                                                    value="{{ $item['nama'] ?? '' }}">
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <input type="number" name="barang_items[{{ $index }}][jumlah]"
-                                                    class="w-full px-2 py-2 border rounded jumlah-input"
-                                                    min="1" value="{{ $item['jumlah'] ?? 1 }}"
-                                                    onchange="calculateSubtotal(this)">
-                                            </td>
-                                            <td class="px-4 py-3">
-                                                <input type="number" name="barang_items[{{ $index }}][harga]"
-                                                    class="w-full px-2 py-2 border rounded harga-input"
-                                                    step="0.01" min="0" placeholder="Rp"
-                                                    value="{{ $item['harga'] ?? '' }}"
-                                                    onchange="calculateSubtotal(this)">
-                                            </td>
-                                            <td class="px-4 py-3 text-right pr-4">
-                                                <span class="subtotal-display">Rp 0</span>
-                                            </td>
-                                            <td class="px-4 py-3 text-center">
-                                                <button type="button" class="text-red-600 hover:text-red-800"
-                                                    onclick="removeBarangRow(this)">Hapus</button>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                        </div>{{-- end section-internal --}}
+
+                        {{-- ===================== SECTION EKSTERNAL ===================== --}}
+                        <div id="section-external" style="display:none;">
+
+                            <!-- EXTERNAL: Jasa MC dll -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-4">
+                                    External: Jasa MC dll
+                                </label>
+                                <div class="overflow-x-auto border rounded-lg">
+                                    <table class="w-full text-sm">
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left">Jasa/Layanan</th>
+                                                <th class="px-4 py-3 text-center w-24">Jumlah</th>
+                                                <th class="px-4 py-3 text-right">Harga/Satuan</th>
+                                                <th class="px-4 py-3 text-right">Subtotal</th>
+                                                <th class="px-4 py-3 text-center w-20">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="external-items">
+                                            @php $externals = old('external_items', [['jasa' => '', 'jumlah' => 1, 'harga' => '']]); @endphp
+                                            @foreach($externals as $index => $item)
+                                            <tr class="border-t">
+                                                <td class="px-4 py-3">
+                                                    <input type="text" name="external_items[{{ $index }}][jasa]"
+                                                        class="w-full px-2 py-2 border rounded"
+                                                        placeholder="Contoh: Jasa MC, Catering"
+                                                        value="{{ $item['jasa'] ?? '' }}">
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <input type="number" name="external_items[{{ $index }}][jumlah]"
+                                                        class="w-full px-2 py-2 border rounded jumlah-input"
+                                                        min="1" value="{{ $item['jumlah'] ?? 1 }}"
+                                                        onchange="calculateSubtotal(this)">
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <input type="number" name="external_items[{{ $index }}][harga]"
+                                                        class="w-full px-2 py-2 border rounded harga-input"
+                                                        step="0.01" min="0" placeholder="Rp"
+                                                        value="{{ $item['harga'] ?? '' }}"
+                                                        onchange="calculateSubtotal(this)">
+                                                </td>
+                                                <td class="px-4 py-3 text-right pr-4">
+                                                    <span class="subtotal-display">Rp 0</span>
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <button type="button" class="text-red-600 hover:text-red-800"
+                                                        onclick="removeExternalRow(this)">Hapus</button>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button type="button" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    onclick="addExternalRow()">+ Tambah Jasa</button>
                             </div>
-                            <button type="button" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                onclick="addBarangRow()">+ Tambah Barang</button>
-                        </div>
+
+                            <!-- EXTERNAL: Barang ATK/Perlengkapan -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-4">
+                                    Barang: ATK/Perlengkapan
+                                </label>
+                                <div class="overflow-x-auto border rounded-lg">
+                                    <table class="w-full text-sm">
+                                        <thead class="bg-gray-100">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left">Nama Barang</th>
+                                                <th class="px-4 py-3 text-center w-24">Jumlah</th>
+                                                <th class="px-4 py-3 text-right">Harga/Satuan</th>
+                                                <th class="px-4 py-3 text-right">Subtotal</th>
+                                                <th class="px-4 py-3 text-center w-20">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="barang-items">
+                                            @php $barangs = old('barang_items', [['nama' => '', 'jumlah' => 1, 'harga' => '']]); @endphp
+                                            @foreach($barangs as $index => $item)
+                                            <tr class="border-t">
+                                                <td class="px-4 py-3">
+                                                    <input type="text" name="barang_items[{{ $index }}][nama]"
+                                                        class="w-full px-2 py-2 border rounded"
+                                                        placeholder="Contoh: Kertas Banner, Spidol"
+                                                        value="{{ $item['nama'] ?? '' }}">
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <input type="number" name="barang_items[{{ $index }}][jumlah]"
+                                                        class="w-full px-2 py-2 border rounded jumlah-input"
+                                                        min="1" value="{{ $item['jumlah'] ?? 1 }}"
+                                                        onchange="calculateSubtotal(this)">
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <input type="number" name="barang_items[{{ $index }}][harga]"
+                                                        class="w-full px-2 py-2 border rounded harga-input"
+                                                        step="0.01" min="0" placeholder="Rp"
+                                                        value="{{ $item['harga'] ?? '' }}"
+                                                        onchange="calculateSubtotal(this)">
+                                                </td>
+                                                <td class="px-4 py-3 text-right pr-4">
+                                                    <span class="subtotal-display">Rp 0</span>
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <button type="button" class="text-red-600 hover:text-red-800"
+                                                        onclick="removeBarangRow(this)">Hapus</button>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button type="button" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    onclick="addBarangRow()">+ Tambah Barang</button>
+                            </div>
+
+                        </div>{{-- end section-external --}}
 
                         <!-- Total Anggaran -->
                         <div class="mb-6">
@@ -288,11 +310,12 @@
                                 Anggaran (Rp) <span class="text-red-500">*</span>
                             </label>
                             <input type="number" name="anggaran" id="anggaran" step="0.01" min="0"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                placeholder="Otomatis dihitung dari item di atas" value="{{ old('anggaran') }}" required>
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50"
+                                placeholder="Otomatis dihitung dari item di atas" value="{{ old('anggaran') }}" required readonly>
                             @error('anggaran')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
+                            <p class="mt-1 text-xs text-gray-500">Total dihitung otomatis dari item yang diisi.</p>
                         </div>
 
                         <!-- File Proposal -->
@@ -331,97 +354,134 @@
     </div>
 
     <script>
-    function updateTotalAnggaran() {
-        let total = 0;
-        document.querySelectorAll('#internal-items tr').forEach(row => {
-            const h = row.querySelector('input[name*="[harga]"]');
-            if (h) total += parseFloat(h.value) || 0;
-        });
-        document.querySelectorAll('#external-items tr').forEach(row => {
-            const j = row.querySelector('.jumlah-input');
-            const h = row.querySelector('.harga-input');
-            if (j && h) total += (parseInt(j.value) || 0) * (parseFloat(h.value) || 0);
-        });
-        document.querySelectorAll('#barang-items tr').forEach(row => {
-            const j = row.querySelector('.jumlah-input');
-            const h = row.querySelector('.harga-input');
-            if (j && h) total += (parseInt(j.value) || 0) * (parseFloat(h.value) || 0);
-        });
-        const anggaranInput = document.getElementById('anggaran');
-        if (anggaranInput) anggaranInput.value = total.toFixed(0);
+// ===================== TOGGLE SECTION =====================
+function toggleLokasiSections() {
+    const tipe = document.getElementById('tipe_lokasi').value;
+    const sectionInternal = document.getElementById('section-internal');
+    const sectionExternal = document.getElementById('section-external');
+
+    if (tipe === 'internal') {
+        sectionInternal.style.display = 'block';
+        sectionExternal.style.display = 'none';
+        clearSectionInputs(sectionExternal);
+    } else if (tipe === 'eksternal') {
+        sectionInternal.style.display = 'none';
+        sectionExternal.style.display = 'block';
+        clearSectionInputs(sectionInternal);
+    } else {
+        sectionInternal.style.display = 'none';
+        sectionExternal.style.display = 'none';
     }
 
-    function addInternalRow() {
-        const tbody = document.getElementById('internal-items');
-        const index = tbody.children.length;
-        const row = document.createElement('tr');
-        row.className = 'border-t';
-        row.innerHTML = `
-            <td class="px-4 py-3">
-                <input type="text" name="internal_items[${index}][item]" class="w-full px-2 py-2 border rounded" placeholder="Contoh: Kebersihan, Dekorasi">
-            </td>
-            <td class="px-4 py-3">
-                <input type="number" name="internal_items[${index}][harga]" class="w-full px-2 py-2 border rounded harga-internal-input" step="0.01" min="0" placeholder="Rp" onchange="updateTotalAnggaran()">
-            </td>
-            <td class="px-4 py-3 text-center">
-                <button type="button" class="text-red-600 hover:text-red-800" onclick="removeInternalRow(this)">Hapus</button>
-            </td>`;
-        tbody.appendChild(row);
-    }
-    function removeInternalRow(btn) { btn.closest('tr').remove(); updateTotalAnggaran(); }
+    updateTotalAnggaran();
+}
 
-    function addExternalRow() {
-        const tbody = document.getElementById('external-items');
-        const index = tbody.children.length;
-        const row = document.createElement('tr');
-        row.className = 'border-t';
-        row.innerHTML = `
-            <td class="px-4 py-3"><input type="text" name="external_items[${index}][jasa]" class="w-full px-2 py-2 border rounded" placeholder="Contoh: Jasa MC, Catering"></td>
-            <td class="px-4 py-3"><input type="number" name="external_items[${index}][jumlah]" class="w-full px-2 py-2 border rounded jumlah-input" min="1" value="1" onchange="calculateSubtotal(this)"></td>
-            <td class="px-4 py-3"><input type="number" name="external_items[${index}][harga]" class="w-full px-2 py-2 border rounded harga-input" step="0.01" min="0" placeholder="Rp" onchange="calculateSubtotal(this)"></td>
-            <td class="px-4 py-3 text-right pr-4"><span class="subtotal-display">Rp 0</span></td>
-            <td class="px-4 py-3 text-center"><button type="button" class="text-red-600 hover:text-red-800" onclick="removeExternalRow(this)">Hapus</button></td>`;
-        tbody.appendChild(row);
-    }
-    function removeExternalRow(btn) { btn.closest('tr').remove(); updateTotalAnggaran(); }
-
-    function addBarangRow() {
-        const tbody = document.getElementById('barang-items');
-        const index = tbody.children.length;
-        const row = document.createElement('tr');
-        row.className = 'border-t';
-        row.innerHTML = `
-            <td class="px-4 py-3"><input type="text" name="barang_items[${index}][nama]" class="w-full px-2 py-2 border rounded" placeholder="Contoh: Kertas Banner, Spidol"></td>
-            <td class="px-4 py-3"><input type="number" name="barang_items[${index}][jumlah]" class="w-full px-2 py-2 border rounded jumlah-input" min="1" value="1" onchange="calculateSubtotal(this)"></td>
-            <td class="px-4 py-3"><input type="number" name="barang_items[${index}][harga]" class="w-full px-2 py-2 border rounded harga-input" step="0.01" min="0" placeholder="Rp" onchange="calculateSubtotal(this)"></td>
-            <td class="px-4 py-3 text-right pr-4"><span class="subtotal-display">Rp 0</span></td>
-            <td class="px-4 py-3 text-center"><button type="button" class="text-red-600 hover:text-red-800" onclick="removeBarangRow(this)">Hapus</button></td>`;
-        tbody.appendChild(row);
-    }
-    function removeBarangRow(btn) { btn.closest('tr').remove(); updateTotalAnggaran(); }
-
-    function calculateSubtotal(input) {
-        const row = input.closest('tr');
-        const j = row.querySelector('.jumlah-input');
-        const h = row.querySelector('.harga-input');
-        const s = row.querySelector('.subtotal-display');
-        if (j && h && s) {
-            const subtotal = (parseInt(j.value) || 0) * (parseFloat(h.value) || 0);
-            s.textContent = 'Rp ' + subtotal.toLocaleString('id-ID', { maximumFractionDigits: 0 });
+function clearSectionInputs(section) {
+    section.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+        if (input.type === 'number' && input.classList.contains('jumlah-input')) {
+            input.value = 1;
+        } else {
+            input.value = '';
         }
-        updateTotalAnggaran();
+    });
+    section.querySelectorAll('.subtotal-display').forEach(el => el.textContent = 'Rp 0');
+}
+
+// ===================== TOTAL ANGGARAN =====================
+function updateTotalAnggaran() {
+    let total = 0;
+    const tipe = document.getElementById('tipe_lokasi').value;
+
+    if (tipe === 'internal') {
+        document.querySelectorAll('#internal-items tr').forEach(row => {
+            const j = row.querySelector('.jumlah-input');
+            const h = row.querySelector('.harga-input');
+            if (j && h) total += (parseInt(j.value) || 0) * (parseFloat(h.value) || 0);
+        });
+    } else if (tipe === 'eksternal') {
+        // Hitung semua item yang ada di section eksternal (jasa & barang)
+        document.querySelectorAll('#external-items tr, #barang-items tr').forEach(row => {
+            const j = row.querySelector('.jumlah-input');
+            const h = row.querySelector('.harga-input');
+            if (j && h) total += (parseInt(j.value) || 0) * (parseFloat(h.value) || 0);
+        });
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('#internal-items tr').forEach(row => {
-            const h = row.querySelector('input[name*="[harga]"]');
-            if (h) h.addEventListener('change', updateTotalAnggaran);
-        });
-        document.querySelectorAll('#external-items tr, #barang-items tr').forEach(row => {
-            const h = row.querySelector('.harga-input');
-            if (h) calculateSubtotal(h);
-        });
-        updateTotalAnggaran();
+    const anggaranInput = document.getElementById('anggaran');
+    if (anggaranInput) anggaranInput.value = total.toFixed(0);
+}
+
+// ===================== DYNAMIC ROWS =====================
+function addInternalRow() {
+    const tbody = document.getElementById('internal-items');
+    const index = tbody.children.length;
+    const row = document.createElement('tr');
+    row.className = 'border-t';
+    row.innerHTML = `
+        <td class="px-4 py-3"><input type="text" name="internal_items[${index}][nama]" class="w-full px-2 py-2 border rounded" placeholder="Contoh: Kebersihan, Konsumsi"></td>
+        <td class="px-4 py-3"><input type="number" name="internal_items[${index}][jumlah]" class="w-full px-2 py-2 border rounded jumlah-input" min="1" value="1" onchange="calculateSubtotal(this)"></td>
+        <td class="px-4 py-3"><input type="number" name="internal_items[${index}][harga]" class="w-full px-2 py-2 border rounded harga-input" step="0.01" min="0" placeholder="Rp" onchange="calculateSubtotal(this)"></td>
+        <td class="px-4 py-3 text-right pr-4"><span class="subtotal-display">Rp 0</span></td>
+        <td class="px-4 py-3 text-center"><button type="button" class="text-red-600 hover:text-red-800" onclick="removeInternalRow(this)">Hapus</button></td>`;
+    tbody.appendChild(row);
+}
+function removeInternalRow(btn) { btn.closest('tr').remove(); updateTotalAnggaran(); }
+
+function addExternalRow() {
+    const tbody = document.getElementById('external-items');
+    const index = tbody.children.length;
+    const row = document.createElement('tr');
+    row.className = 'border-t';
+    row.innerHTML = `
+        <td class="px-4 py-3"><input type="text" name="external_items[${index}][jasa]" class="w-full px-2 py-2 border rounded" placeholder="Contoh: Jasa MC, Catering"></td>
+        <td class="px-4 py-3"><input type="number" name="external_items[${index}][jumlah]" class="w-full px-2 py-2 border rounded jumlah-input" min="1" value="1" onchange="calculateSubtotal(this)"></td>
+        <td class="px-4 py-3"><input type="number" name="external_items[${index}][harga]" class="w-full px-2 py-2 border rounded harga-input" step="0.01" min="0" placeholder="Rp" onchange="calculateSubtotal(this)"></td>
+        <td class="px-4 py-3 text-right pr-4"><span class="subtotal-display">Rp 0</span></td>
+        <td class="px-4 py-3 text-center"><button type="button" class="text-red-600 hover:text-red-800" onclick="removeExternalRow(this)">Hapus</button></td>`;
+    tbody.appendChild(row);
+}
+function removeExternalRow(btn) { btn.closest('tr').remove(); updateTotalAnggaran(); }
+
+function addBarangRow() {
+    const tbody = document.getElementById('barang-items');
+    const index = tbody.children.length;
+    const row = document.createElement('tr');
+    row.className = 'border-t';
+    row.innerHTML = `
+        <td class="px-4 py-3"><input type="text" name="barang_items[${index}][nama]" class="w-full px-2 py-2 border rounded" placeholder="Contoh: Kertas Banner, Spidol"></td>
+        <td class="px-4 py-3"><input type="number" name="barang_items[${index}][jumlah]" class="w-full px-2 py-2 border rounded jumlah-input" min="1" value="1" onchange="calculateSubtotal(this)"></td>
+        <td class="px-4 py-3"><input type="number" name="barang_items[${index}][harga]" class="w-full px-2 py-2 border rounded harga-input" step="0.01" min="0" placeholder="Rp" onchange="calculateSubtotal(this)"></td>
+        <td class="px-4 py-3 text-right pr-4"><span class="subtotal-display">Rp 0</span></td>
+        <td class="px-4 py-3 text-center"><button type="button" class="text-red-600 hover:text-red-800" onclick="removeBarangRow(this)">Hapus</button></td>`;
+    tbody.appendChild(row);
+}
+function removeBarangRow(btn) { btn.closest('tr').remove(); updateTotalAnggaran(); }
+
+// ===================== CALCULATE SUBTOTAL =====================
+function calculateSubtotal(input) {
+    const row = input.closest('tr');
+    const j = row.querySelector('.jumlah-input');
+    const h = row.querySelector('.harga-input');
+    const s = row.querySelector('.subtotal-display');
+    if (j && h && s) {
+        const subtotal = (parseInt(j.value) || 0) * (parseFloat(h.value) || 0);
+        s.textContent = 'Rp ' + subtotal.toLocaleString('id-ID', { maximumFractionDigits: 0 });
+    }
+    updateTotalAnggaran();
+}
+
+// ===================== ON LOAD =====================
+document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('tipe_lokasi').addEventListener('change', toggleLokasiSections);
+    toggleLokasiSections();
+
+    // Hitung subtotal awal untuk old value jika ada error validasi
+    document.querySelectorAll('#internal-items tr, #external-items tr, #barang-items tr').forEach(row => {
+        const h = row.querySelector('.harga-input');
+        if (h) calculateSubtotal(h);
     });
-    </script>
+
+    updateTotalAnggaran();
+});
+</script>
 </x-app-layout>
