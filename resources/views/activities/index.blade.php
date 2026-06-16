@@ -18,7 +18,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold mb-4">Filter & Pencarian</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 {{ in_array(Auth::user()->role, ['ukm', 'hmp']) ? 'md:grid-cols-3' : 'md:grid-cols-4' }} gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Cari Kegiatan</label>
                             <input type="text" id="searchActivity" placeholder="Nama kegiatan..."
@@ -37,7 +37,7 @@
                             </select>
                         </div>
 
-                        @if(Auth::user()->role !== 'ormawa')
+                        @if(Auth::user()->role !== 'hmp' && Auth::user()->role !== 'ukm')
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Organisasi</label>
                             <select id="ormawaFilter"

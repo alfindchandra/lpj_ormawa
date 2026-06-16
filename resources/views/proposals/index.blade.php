@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Daftar Proposal Kegiatan
             </h2>
-            @if(in_array(Auth::user()->role, ['ormawa', 'bem']))
+            @if(in_array(Auth::user()->role, ['ukm', 'hmp', 'bem']))
             <a href="{{ route('proposals.create') }}"
                 class="inline-flex items-center px-4 py-2 mr-4 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 transition duration-150 ease-in-out">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,12 +27,16 @@
             <!-- Filter & Search -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 {{ in_array(Auth::user()->role, ['ukm', 'hmp']) ? 'md:grid-cols-2' : 'md:grid-cols-3' }} gap-4">
+                        
+                        {{-- Input Cari Kegiatan --}}
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Cari Kegiatan</label>
                             <input type="text" id="searchInput" placeholder="Cari nama kegiatan atau kode..."
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         </div>
+
+                        {{-- Filter Status --}}
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Filter Status</label>
                             <select id="statusFilter"
@@ -44,18 +48,24 @@
                                 <option value="rejected">Ditolak</option>
                             </select>
                         </div>
-                        @if(Auth::user()->role !== 'ormawa')
+
+                        {{-- Filter Organisasi (Hanya untuk non-UKM dan non-HMP) --}}
+                        @if(Auth::user()->role !== 'ukm' && Auth::user()->role !== 'hmp')
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Filter Organisasi</label>
                             <select id="ormawaFilter"
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                                 <option value="">Semua Organisasi</option>
                                 @foreach($proposals->unique('user.ormawa_name') as $p)
+                                {{-- Pastikan relasi user tidak null sebelum memanggil ormawa_name --}}
+                                @if($p->user)
                                 <option value="{{ $p->user->ormawa_name }}">{{ $p->user->ormawa_name }}</option>
+                                @endif
                                 @endforeach
                             </select>
                         </div>
                         @endif
+
                     </div>
                 </div>
             </div>

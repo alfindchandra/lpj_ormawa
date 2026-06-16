@@ -13,15 +13,10 @@ class ActivityController extends Controller
     {
         $user = Auth::user();
         
-        if ($user->role === 'ormawa') {
-            $activities = Activity::where('user_id', $user->id)
-                ->with('proposal')
-                ->latest()
-                ->get();
+        if (in_array($user->role, ['admin', 'bem'])) {
+            $activities = Activity::with(['user', 'proposal'])->latest()->get();
         } else {
-            $activities = Activity::with(['proposal', 'user'])
-                ->latest()
-                ->get();
+            $activities = Activity::where('user_id', $user->id)->with('proposal')->latest()->get();
         }
         
         return view('activities.index', compact('activities'));

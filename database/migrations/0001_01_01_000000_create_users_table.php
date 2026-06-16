@@ -20,7 +20,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
 
-            $table->enum('role', ['admin', 'bem', 'ormawa'])->default('ormawa');
+            $table->enum('role', ['admin', 'bem', 'hmp', 'ukm', 'ormawa'])->default('ormawa');
             $table->string('ormawa_name')->nullable();
             $table->string('phone')->nullable();
         });

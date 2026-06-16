@@ -8,6 +8,8 @@ use App\Http\Controllers\LpjController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PeriodController;
+use App\Http\Controllers\KabinetController;
+use App\Http\Controllers\OrmawaController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -40,10 +42,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('activities', ActivityController::class)->only(['index', 'show']);
     Route::post('/activities/{activity}/update-status', [ActivityController::class, 'updateStatus'])
         ->name('activities.update-status')
-        ->middleware('role:ormawa,bem');
+        ->middleware('role:ormawa,bem,hmp,ukm');
     Route::post('/activities/{activity}/upload-documentation', [ActivityController::class, 'uploadDocumentation'])
         ->name('activities.upload-documentation')
-        ->middleware('role:ormawa,bem');
+        ->middleware('role:ormawa,bem,hmp,ukm');
     
     // LPJ Routes
     Route::get('/activities/{activity}/lpj/create', [LpjController::class, 'create'])
@@ -78,21 +80,41 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/periods/{period}', [PeriodController::class, 'destroy'])->name('periods.destroy');
         Route::post('/periods/{period}/activate', [PeriodController::class, 'activate'])->name('periods.activate');
     });
-    Route::middleware(['auth', 'verified', 'role:ormawa'])->group(function () {
+
+    // ============================================================
+    // PENGURUS INTI (Kabinet) Routes
+    // View: semua role bisa lihat
+    // CRUD: hanya admin & bem
+    // ============================================================
+    Route::get('/kabinet', [KabinetController::class, 'index'])->name('kabinet.index');
+
+    Route::middleware('role:admin,bem')->group(function () {
+        Route::get('/kabinet/create', [KabinetController::class, 'create'])->name('kabinet.create');
+        Route::post('/kabinet', [KabinetController::class, 'store'])->name('kabinet.store');
+        Route::get('/kabinet/{kabinet}/edit', [KabinetController::class, 'edit'])->name('kabinet.edit');
+        Route::patch('/kabinet/{kabinet}', [KabinetController::class, 'update'])->name('kabinet.update');
+        Route::delete('/kabinet/{kabinet}', [KabinetController::class, 'destroy'])->name('kabinet.destroy');
+        Route::post('/kabinet/{kabinet}/toggle-active', [KabinetController::class, 'toggleActive'])->name('kabinet.toggle-active');
+    });
+
+    // ============================================================
+    // Ormawa Routes (HMP, UKM, Ormawa)
+    // ============================================================
+    Route::middleware(['auth', 'verified', 'role:ormawa,hmp,ukm'])->group(function () {
     
-    // Halaman Profil Ormawa
-    Route::get('/ormawa/profile', [OrmawaController::class, 'profile'])->name('ormawa.profile');
-    Route::patch('/ormawa/profile', [OrmawaController::class, 'updateProfile'])->name('ormawa.profile.update');
-    
-    // Riwayat Kegiatan Ormawa
-    Route::get('/ormawa/history', [OrmawaController::class, 'history'])->name('ormawa.history');
-    
-    // Statistik Ormawa
-    Route::get('/ormawa/statistics', [OrmawaController::class, 'statistics'])->name('ormawa.statistics');
-    
-    // Panduan & Bantuan
-    Route::get('/ormawa/guide', [OrmawaController::class, 'guide'])->name('ormawa.guide');
-});
+        // Halaman Profil Ormawa
+        Route::get('/ormawa/profile', [OrmawaController::class, 'profile'])->name('ormawa.profile');
+        Route::patch('/ormawa/profile', [OrmawaController::class, 'updateProfile'])->name('ormawa.profile.update');
+        
+        // Riwayat Kegiatan Ormawa
+        Route::get('/ormawa/history', [OrmawaController::class, 'history'])->name('ormawa.history');
+        
+        // Statistik Ormawa
+        Route::get('/ormawa/statistics', [OrmawaController::class, 'statistics'])->name('ormawa.statistics');
+        
+        // Panduan & Bantuan
+        Route::get('/ormawa/guide', [OrmawaController::class, 'guide'])->name('ormawa.guide');
+    });
 
 });
 

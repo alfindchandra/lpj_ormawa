@@ -15,10 +15,12 @@ class ProposalController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'ormawa') {
-            $proposals = Proposal::where('user_id', $user->id)->with('period')->latest()->get();
-        } else {
+        
+        if (in_array($user->role, ['admin', 'bem'])) {
             $proposals = Proposal::with(['user', 'period'])->latest()->get();
+        } else {
+          
+            $proposals = Proposal::where('user_id', $user->id)->with('period')->latest()->get();
         }
 
         return view('proposals.index', compact('proposals'));
@@ -27,7 +29,7 @@ class ProposalController extends Controller
     public function create()
     {
         $user = Auth::user();
-        if (!in_array($user->role, ['ormawa', 'bem'])) {
+        if (!in_array($user->role, ['ukm', 'hmp', 'bem'])) {
             abort(403, 'Hanya ORMAWA dan BEM yang dapat membuat proposal.');
         }
 
@@ -40,7 +42,7 @@ class ProposalController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        if (!in_array($user->role, ['ormawa', 'bem'])) {
+        if (!in_array($user->role, ['ukm', 'hmp', 'bem'])) {
             abort(403, 'Hanya ORMAWA dan BEM yang dapat membuat proposal.');
         }
 
