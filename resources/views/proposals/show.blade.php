@@ -97,7 +97,8 @@
                             <h3 class="text-lg font-semibold mb-4 pb-2 border-b">Detail Anggaran</h3>
 
                             <div class="space-y-6">
-                                @if($proposal->internal_items && count($proposal->internal_items) > 0)
+                                {{-- 1. INTERNAL ITEMS --}}
+                                @if(!empty($proposal->internal_items) && count($proposal->internal_items) > 0)
                                 <div>
                                     <label class="text-sm font-medium text-gray-500 block mb-2">Internal: Anggaran Perlengkapan & Kegiatan</label>
                                     <div class="overflow-x-auto border rounded-lg">
@@ -127,7 +128,8 @@
                                 </div>
                                 @endif
 
-                                @if($proposal->external_items && count($proposal->external_items) > 0)
+                                {{-- 2. EXTERNAL ITEMS --}}
+                                @if(!empty($proposal->external_items) && count($proposal->external_items) > 0)
                                 <div>
                                     <label class="text-sm font-medium text-gray-500 block mb-2">External: Jasa MC dll</label>
                                     <div class="overflow-x-auto border rounded-lg">
@@ -157,7 +159,8 @@
                                 </div>
                                 @endif
 
-                                @if($proposal->barang_items && count($proposal->barang_items) > 0)
+                                {{-- 3. BARANG ITEMS --}}
+                                @if(!empty($proposal->barang_items) && count($proposal->barang_items) > 0)
                                 <div>
                                     <label class="text-sm font-medium text-gray-500 block mb-2">Barang: ATK/Perlengkapan</label>
                                     <div class="overflow-x-auto border rounded-lg">
@@ -187,10 +190,11 @@
                                 </div>
                                 @endif
 
+                                {{-- TOTAL ANGGARAN --}}
                                 <div class="pt-4 border-t-2 border-gray-200">
                                     <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg border border-blue-200">
                                         <label class="text-sm font-semibold text-blue-900">Total Anggaran</label>
-                                        <p class="text-2xl font-bold text-blue-900">Rp {{ number_format($proposal->anggaran, 0, ',', '.') }}</p>
+                                        <p class="text-2xl font-bold text-blue-900">Rp {{ number_format($proposal->anggaran ?? 0, 0, ',', '.') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -225,6 +229,7 @@
                 <div class="space-y-6">
                     <!-- Edit Button for Owner or Admin -->
                     @if(Auth::user()->id === $proposal->user_id)
+                    @if($proposal->status === 'pending')
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">
                             <a href="{{ route('proposals.edit', $proposal) }}"
@@ -237,6 +242,7 @@
                             </a>
                         </div>
                     </div>
+                    @endif
                     @endif
 
                     <!-- Status Card -->

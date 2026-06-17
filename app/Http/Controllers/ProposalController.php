@@ -58,15 +58,15 @@ class ProposalController extends Controller
             'file_proposal'  => 'required|file|mimes:pdf|max:5120',
             'barang_internal_items'          => 'nullable|array',
             'barang_internal_items.*.nama'   => 'nullable|string',
-            'barang_internal_items.*.jumlah' => 'nullable|numeric|min:1',
+            'barang_internal_items.*.jumlah' => 'nullable|numeric|min:0',
             'barang_internal_items.*.harga'  => 'nullable|numeric|min:0',
             'external_items'              => 'nullable|array',
             'external_items.*.jasa'       => 'nullable|string',
-            'external_items.*.jumlah'     => 'nullable|numeric|min:1',
+            'external_items.*.jumlah'     => 'nullable|numeric|min:0',
             'external_items.*.harga'      => 'nullable|numeric|min:0',
             'barang_items'                => 'nullable|array',
             'barang_items.*.nama'         => 'nullable|string',
-            'barang_items.*.jumlah'       => 'nullable|numeric|min:1',
+            'barang_items.*.jumlah'       => 'nullable|numeric|min:0',
             'barang_items.*.harga'        => 'nullable|numeric|min:0',
         ]);
 
@@ -153,17 +153,17 @@ class ProposalController extends Controller
             // Validasi baru untuk internal_items (Sama seperti eksternal)
             'internal_items'          => 'nullable|array',
             'internal_items.*.nama'   => 'nullable|string',
-            'internal_items.*.jumlah' => 'nullable|numeric|min:1',
+            'internal_items.*.jumlah' => 'nullable|numeric|min:0',
             'internal_items.*.harga'  => 'nullable|numeric|min:0',
 
             'external_items'          => 'nullable|array',
             'external_items.*.jasa'   => 'nullable|string',
-            'external_items.*.jumlah' => 'nullable|numeric|min:1',
+            'external_items.*.jumlah' => 'nullable|numeric|min:0',
             'external_items.*.harga'  => 'nullable|numeric|min:0',
             
             'barang_items'            => 'nullable|array',
             'barang_items.*.nama'     => 'nullable|string',
-            'barang_items.*.jumlah'   => 'nullable|numeric|min:1',
+            'barang_items.*.jumlah'   => 'nullable|numeric|min:0',
             'barang_items.*.harga'    => 'nullable|numeric|min:0',
         ]);
 

@@ -60,14 +60,34 @@
                 {{-- Row 2: Nama Ormawa & Nama Kabinet --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Ormawa/UKM <span class="text-red-500">*</span></label>
-                        <input type="text" name="ormawa_name" value="{{ old('ormawa_name') }}" required placeholder="cth: HMPTI, UKM ALAM, BEM IKIP"
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                            Nama Ormawa/UKM/HMP <span class="text-red-500">*</span>
+                        </label>
+                        <select name="ormawa_name" required
                             class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('ormawa_name') border-red-500 @enderror">
+                            <option value="">-- Pilih Ormawa/UKM/HMP --</option>
+                            
+                            @foreach($ormawas as $o)
+                                {{-- Perbaikan: Menggunakan properti ormawa_name & ormawa_type --}}
+                                <option value="{{ $o->ormawa_name }}" {{ old('ormawa_name') == $o->ormawa_name ? 'selected' : '' }}>
+                                    {{ $o->ormawa_name }} ({{ strtoupper($o->ormawa_type) }})
+                                </option>
+                            @endforeach
+
+                        </select>
+                        @error('ormawa_name')
+                            <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
+
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Kabinet</label>
-                        <input type="text" name="nama_kabinet" value="{{ old('nama_kabinet') }}" placeholder="cth: Kabinet Cakrawala (opsional)"
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" name="nama_kabinet" value="{{ old('nama_kabinet') }}" 
+                            placeholder="cth: Kabinet Cakrawala (opsional)"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('nama_kabinet') border-red-500 @enderror">
+                        @error('nama_kabinet')
+                            <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
 

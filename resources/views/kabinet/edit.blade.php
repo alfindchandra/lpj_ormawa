@@ -19,7 +19,7 @@
                 <p class="text-amber-100 text-sm mt-1">{{ $kabinet->ormawa_name }} • {{ $kabinet->period->nama_periode ?? '-' }}</p>
             </div>
 
-            <form action="{{ route('kabinet.update', $kabinet) }}" method="POST" class="p-6 space-y-6">
+            <form id="update-form" action="{{ route('kabinet.update', $kabinet) }}" method="POST" class="p-6 space-y-6">
                 @csrf
                 @method('PATCH')
 
@@ -57,8 +57,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Ormawa/UKM <span class="text-red-500">*</span></label>
-                        <input type="text" name="ormawa_name" value="{{ old('ormawa_name', $kabinet->ormawa_name) }}" required
+                        <select name="ormawa_name" required
                             class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">-- Pilih Ormawa/UKM --</option>
+                            @foreach($ormawas as $o)
+                            <option value="{{ $o->ormawa_name }}" {{ old('ormawa_name', $kabinet->ormawa_name) == $o->ormawa_name ? 'selected' : '' }}>
+                                {{ $o->ormawa_name }} ({{ strtoupper($o->ormawa_type) }})
+                            </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Kabinet</label>
@@ -115,7 +122,7 @@
                         <input type="checkbox" name="is_active" id="is_active" value="1"
                             {{ old('is_active', $kabinet->is_active) ? 'checked' : '' }}
                             class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-                        <label for="is_active" class="text-sm font-semibold text-gray-700">Kabinet Sedang Aktif</label>
+                        <label class="text-sm font-semibold text-gray-700" for="is_active">Kabinet Sedang Aktif</label>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">Keterangan</label>
@@ -125,13 +132,10 @@
                 </div>
 
                 <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <form action="{{ route('kabinet.destroy', $kabinet) }}" method="POST"
-                        onsubmit="return confirm('Yakin ingin menghapus data pengurus ini?')">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="px-4 py-2.5 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition">
-                            🗑️ Hapus
-                        </button>
-                    </form>
+                    <button type="submit" form="delete-form" class="px-4 py-2.5 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition">
+                        🗑️ Hapus
+                    </button>
+                    
                     <div class="flex gap-3">
                         <a href="{{ route('kabinet.index') }}"
                             class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
@@ -144,6 +148,13 @@
                     </div>
                 </div>
             </form>
+
+            <form id="delete-form" action="{{ route('kabinet.destroy', $kabinet) }}" method="POST" class="hidden"
+                onsubmit="return confirm('Yakin ingin menghapus data pengurus ini?')">
+                @csrf 
+                @method('DELETE')
+            </form>
+
         </div>
     </div>
 </x-app-layout>

@@ -167,7 +167,7 @@
                                                 <td class="px-4 py-3">
                                                     <input type="number" name="internal_items[{{ $index }}][harga]"
                                                         class="w-full px-2 py-2 border rounded harga-input"
-                                                        step="0.01" min="0" placeholder="Rp"
+                                                        step="1" min="0" placeholder="Rp"
                                                         value="{{ $item['harga'] ?? '' }}"
                                                         onchange="calculateSubtotal(this)">
                                                 </td>
@@ -209,7 +209,7 @@
                                             </tr>
                                         </thead>
                                         <tbody id="external-items">
-                                            @php $externals = old('external_items', [['jasa' => '', 'jumlah' => 1, 'harga' => '']]); @endphp
+                                            @php $externals = old('external_items', [['jasa' => '', 'jumlah' => '', 'harga' => '']]); @endphp
                                             @foreach($externals as $index => $item)
                                             <tr class="border-t">
                                                 <td class="px-4 py-3">
@@ -227,7 +227,7 @@
                                                 <td class="px-4 py-3">
                                                     <input type="number" name="external_items[{{ $index }}][harga]"
                                                         class="w-full px-2 py-2 border rounded harga-input"
-                                                        step="0.01" min="0" placeholder="Rp"
+                                                        step="1" min="0" placeholder="Rp"
                                                         value="{{ $item['harga'] ?? '' }}"
                                                         onchange="calculateSubtotal(this)">
                                                 </td>
@@ -264,7 +264,7 @@
                                             </tr>
                                         </thead>
                                         <tbody id="barang-items">
-                                            @php $barangs = old('barang_items', [['nama' => '', 'jumlah' => 1, 'harga' => '']]); @endphp
+                                            @php $barangs = old('barang_items', [['nama' => '', 'jumlah' => '', 'harga' => '']]); @endphp
                                             @foreach($barangs as $index => $item)
                                             <tr class="border-t">
                                                 <td class="px-4 py-3">
@@ -276,13 +276,13 @@
                                                 <td class="px-4 py-3">
                                                     <input type="number" name="barang_items[{{ $index }}][jumlah]"
                                                         class="w-full px-2 py-2 border rounded jumlah-input"
-                                                        min="1" value="{{ $item['jumlah'] ?? 1 }}"
+                                                        min="0" value="{{ $item['jumlah'] ?? 0 }}"
                                                         onchange="calculateSubtotal(this)">
                                                 </td>
                                                 <td class="px-4 py-3">
                                                     <input type="number" name="barang_items[{{ $index }}][harga]"
                                                         class="w-full px-2 py-2 border rounded harga-input"
-                                                        step="0.01" min="0" placeholder="Rp"
+                                                        step="1" min="0" placeholder="Rp"
                                                         value="{{ $item['harga'] ?? '' }}"
                                                         onchange="calculateSubtotal(this)">
                                                 </td>
@@ -309,7 +309,7 @@
                             <label for="anggaran" class="block text-sm font-medium text-gray-700 mb-2">
                                 Anggaran (Rp) <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" name="anggaran" id="anggaran" step="0.01" min="0"
+                            <input type="number" name="anggaran" id="anggaran" step="1" min="0"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 bg-gray-50"
                                 placeholder="Otomatis dihitung dari item di atas" value="{{ old('anggaran') }}" required readonly>
                             @error('anggaran')
@@ -379,7 +379,7 @@ function toggleLokasiSections() {
 function clearSectionInputs(section) {
     section.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
         if (input.type === 'number' && input.classList.contains('jumlah-input')) {
-            input.value = 1;
+            input.value = '';
         } else {
             input.value = '';
         }

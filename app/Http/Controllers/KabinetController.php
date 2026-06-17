@@ -6,6 +6,7 @@ use App\Models\Kabinet;
 use App\Models\Period;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class KabinetController extends Controller
 {
@@ -66,7 +67,12 @@ class KabinetController extends Controller
     {
         $periods = Period::orderBy('tahun_mulai', 'desc')->get();
         $activePeriod = Period::getActive();
-        return view('kabinet.create', compact('periods', 'activePeriod'));
+        $ormawas = User::select('ormawa_name', 'role as ormawa_type')
+        ->whereNotNull('ormawa_name')
+        ->distinct()
+        ->orderBy('ormawa_name')
+        ->get();
+        return view('kabinet.create', compact('periods', 'activePeriod', 'ormawas'));
     }
 
     /**
@@ -101,11 +107,19 @@ class KabinetController extends Controller
      * Form edit pengurus inti
      */
     public function edit(Kabinet $kabinet)
-    {
-        $periods = Period::orderBy('tahun_mulai', 'desc')->get();
-        $activePeriod = Period::getActive();
-        return view('kabinet.edit', compact('kabinet', 'periods', 'activePeriod'));
-    }
+{
+    $periods = Period::orderBy('tahun_mulai', 'desc')->get();
+    $activePeriod = Period::getActive();
+    
+    // Ambil daftar nama ormawa yang valid untuk dipilih
+    $ormawas = \App\Models\User::select('ormawa_name', 'role as ormawa_type')
+        ->whereNotNull('ormawa_name')
+        ->distinct()
+        ->orderBy('ormawa_name')
+        ->get();
+
+    return view('kabinet.edit', compact('kabinet', 'periods', 'activePeriod', 'ormawas'));
+}
 
     /**
      * Update pengurus inti
