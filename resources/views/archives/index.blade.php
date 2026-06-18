@@ -20,12 +20,12 @@
             @endif
 
             @if($activePeriod)
-            <div class="bg-gradient-to-r from-indigo-600 to-blue-600 overflow-hidden shadow-xl rounded-2xl transition duration-300 transform hover:scale-[1.01]">
-                <div class="p-6 sm:p-8 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="bg-blue-600 overflow-hidden shadow-xl rounded-2xl transition duration-300 transform hover:scale-[1.01]">
+                <div class="p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <span class="px-3 py-1 bg-white/20 text-xs font-bold tracking-wider uppercase rounded-full">Periode Utama Aktif</span>
                         <h3 class="text-3xl font-black mt-2 tracking-tight">{{ $activePeriod->nama_periode }}</h3>
-                        <p class="text-sm mt-1 text-indigo-100 font-medium">
+                        <p class="text-sm mt-1 font-medium">
                             Tahun Kepengurusan: {{ $activePeriod->tahun_mulai }} s/d {{ $activePeriod->tahun_selesai }}
                         </p>
                     </div>

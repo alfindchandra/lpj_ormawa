@@ -113,7 +113,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                                 @foreach($group as $kabinet)
                                 <div class="kabinet-card bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
-                                    <div class="px-5 py-4 bg-gradient-to-r {{ $type === 'bem' ? 'from-blue-600 to-blue-700' : ($type === 'hmp' ? 'from-emerald-600 to-emerald-700' : 'from-amber-500 to-amber-600') }} text-white">
+                                    <div class="px-5 py-4 bg-blue-600 text-white">
                                         <div class="flex items-start justify-between">
                                             <div>
                                                 <p class="font-bold text-lg leading-tight">{{ $kabinet->ormawa_name }}</p>
