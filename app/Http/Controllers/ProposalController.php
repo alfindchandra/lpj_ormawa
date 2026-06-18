@@ -30,7 +30,7 @@ class ProposalController extends Controller
     {
         $user = Auth::user();
         if (!in_array($user->role, ['ukm', 'hmp', 'bem'])) {
-            abort(403, 'Hanya ORMAWA dan BEM yang dapat membuat proposal.');
+            abort(403, 'anda tidak memiliki akses untuk membuat proposal. Hanya UKM, HMP, dan BEM yang dapat membuat proposal.');
         }
 
         $periods = Period::orderBy('is_active', 'desc')->orderBy('tahun_mulai', 'desc')->get();
@@ -43,7 +43,7 @@ class ProposalController extends Controller
     {
         $user = Auth::user();
         if (!in_array($user->role, ['ukm', 'hmp', 'bem'])) {
-            abort(403, 'Hanya ORMAWA dan BEM yang dapat membuat proposal.');
+            abort(403, 'anda tidak memiliki akses untuk membuat proposal. Hanya UKM, HMP, dan BEM yang dapat membuat proposal.');
         }
 
         $validated = $request->validate([
@@ -257,7 +257,7 @@ class ProposalController extends Controller
         if ($proposal->file_proposal) {
             Storage::disk('public')->delete($proposal->file_proposal);
         }
-
+ 
         $proposal->delete();
 
         return redirect()->route('proposals.index')

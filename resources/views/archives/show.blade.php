@@ -181,6 +181,7 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach($proposals as $proposal)
+                                 @if(Auth::user()->role !== 'ormawa')
                                 <tr class="hover:bg-gray-50" data-ormawa="{{ $proposal->user->ormawa_name }}"
                                     data-status="{{ $proposal->status === 'approved_admin' ? 'approved' : ($proposal->status === 'rejected' ? 'rejected' : '') }}">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -235,6 +236,7 @@
                                         </a>
                                     </td>
                                 </tr>
+                                @endif
                                 @endforeach
                             </tbody>
                         </table>

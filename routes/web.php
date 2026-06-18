@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\LpjController;
+use App\Http\Controllers\Auth\UserManagementController;
 use App\Http\Controllers\ArchiveController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PeriodController;
@@ -14,6 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
+});
+
+Route::middleware(['auth', 'role:bem'])->group(function () {
+    Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.index');
+    Route::patch('/user-management/{user}', [UserManagementController::class, 'update'])->name('users.update');
+    Route::delete('/user-management/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -74,12 +81,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:admin,bem');
     
     // Period Management Routes (Admin Only)
-    Route::middleware('role:admin')->group(function () {
-        Route::post('/periods', [PeriodController::class, 'store'])->name('periods.store');
-        Route::patch('/periods/{period}', [PeriodController::class, 'update'])->name('periods.update');
-        Route::delete('/periods/{period}', [PeriodController::class, 'destroy'])->name('periods.destroy');
-        Route::post('/periods/{period}/activate', [PeriodController::class, 'activate'])->name('periods.activate');
-    });
+    Route::middleware(['auth', 'role:admin,bem'])->group(function () {
+    Route::post('/periods', [PeriodController::class, 'store'])->name('periods.store');
+    Route::put('/periods/{period}', [PeriodController::class, 'update'])->name('periods.update');
+    Route::patch('/periods/{period}/toggle', [PeriodController::class, 'toggleActive'])->name('periods.toggle');
+    Route::delete('/periods/{period}', [PeriodController::class, 'destroy'])->name('periods.destroy');
+});
 
     // ============================================================
     // PENGURUS INTI (Kabinet) Routes

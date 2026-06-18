@@ -29,15 +29,21 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        // PERBAIKAN: Validasi ditambahkan untuk role dan ormawa_name
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'role' => ['required', 'string', 'in:hmp,ukm'], // Memastikan role sesuai opsi
+            'ormawa_name' => ['required', 'string', 'max:255'], // Diwajibkan karena profil ormawa
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        // PERBAIKAN: Menyimpan field role dan ormawa_name ke database
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'role' => $request->role,
+            'ormawa_name' => $request->ormawa_name,
             'password' => Hash::make($request->password),
         ]);
 

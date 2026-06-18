@@ -100,7 +100,7 @@
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Kegiatan</th>
-                                    @if(Auth::user()->role !== 'ormawa')
+                                    @if(Auth::user()->role !== 'hmp' && Auth::user()->role !== 'ukm')
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organisasi</th>
                                     @endif
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
@@ -121,7 +121,7 @@
                                         <div class="font-medium">{{ Str::limit($proposal->nama_kegiatan, 50) }}</div>
                                         <div class="text-xs text-gray-500 mt-1">{{ Str::limit($proposal->deskripsi, 80) }}</div>
                                     </td>
-                                    @if(Auth::user()->role !== 'ormawa')
+                                    @if(Auth::user()->role !== 'hmp' && Auth::user()->role !== 'ukm')
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                         <div class="flex items-center">
                                             <div class="flex-shrink-0 h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -172,10 +172,11 @@
                                             </svg>
                                         </a>
 
+
                                         
 
                                         <!-- Hapus (Icon Tempat Sampah) -->
-                                        @if(Auth::user()->role === 'ormawa' && $proposal->status === 'pending')
+                                        @if(Auth::user()->role === 'bem' && $proposal->status === 'pending')
                                         <form action="{{ route('proposals.destroy', $proposal) }}" method="POST"
                                               class="inline-block flex items-center" 
                                               onsubmit="return confirm('Yakin ingin menghapus proposal ini?');">
