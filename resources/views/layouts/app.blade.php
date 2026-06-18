@@ -7,16 +7,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'ORMAWA Monitoring') }} - @yield('title', 'Dashboard')</title>
-    <link rel="icon" type="image/png" href="{{ asset('xlogo.png') }}" />
+    <link class="rounded-full" rel="icon" type="image/png" href="{{ asset('xlogo.png') }}" />
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Additional Styles -->
     <style>
     [x-cloak] {
         display: none !important;
@@ -53,12 +50,10 @@
 <body class="font-sans antialiased bg-gray-100">
     <div x-data="{ sidebarOpen: false }" class="min-h-screen">
 
-        <!-- Sidebar -->
         <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-900 to-blue-800 text-white
            transform transition-transform duration-300 ease-in-out
            lg:translate-x-0">
 
-            <!-- Logo -->
             <div class="flex items-center justify-between h-16 px-6 bg-blue-950">
                 <div class="flex items-center space-x-3">
                     <svg class="w-8 h-8 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,7 +73,6 @@
                 </button>
             </div>
 
-            <!-- User Info -->
             <div class="px-6 py-4 bg-blue-800 bg-opacity-50">
                 <div class="flex items-center space-x-3">
                     <div class="flex-shrink-0">
@@ -102,9 +96,7 @@
                 </div>
             </div>
 
-            <!-- Navigation -->
             <nav class="px-3 py-4 space-y-1 overflow-y-auto" style="max-height: calc(100vh - 180px);">
-                <!-- Dashboard -->
                 <a href="{{ route('dashboard') }}"
                     class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-blue-700 {{ request()->routeIs('dashboard') ? 'bg-blue-700' : '' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,7 +106,6 @@
                     Dashboard
                 </a>
 
-                <!-- Proposals -->
                 <a href="{{ route('proposals.index') }}"
                     class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-blue-700 {{ request()->routeIs('proposals.*') ? 'bg-blue-700' : '' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,7 +116,6 @@
                 </a>
                 
 
-                <!-- Activities -->
                 <a href="{{ route('activities.index') }}"
                     class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-blue-700 {{ request()->routeIs('activities.*') ? 'bg-blue-700' : '' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,8 +124,8 @@
                     </svg>
                     Monitoring Kegiatan
                 </a>
-                <!-- Pengurus Inti -->
-                 @if(in_array(Auth::user()->role, ['admin', 'bem']))
+
+                @if(in_array(Auth::user()->role, ['admin', 'bem']))
                 <a href="{{ route('kabinet.index') }}"
                     class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-blue-700 {{ request()->routeIs('kabinet.*') ? 'bg-blue-700' : '' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,7 +136,6 @@
                 </a>
                 @endif
 
-                <!-- Archives -->
                 <a href="{{ route('archives.index') }}"
                     class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-blue-700 {{ request()->routeIs('archives.*') ? 'bg-blue-700' : '' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -155,16 +144,14 @@
                     </svg>
                     Arsip Kegiatan
                 </a>
-               
-
+                
                 <div class="pt-4 pb-2">
                     <div class="border-t border-blue-700"></div>
                 </div>
 
-                <!-- Tambah Akun (Admin & BEM) -->
                 @if(in_array(Auth::user()->role, ['admin','bem']))
                 <a href="{{ route('register') }}"
-                    class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-blue-700">
+                    class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-blue-700 {{ request()->routeIs('register') ? 'bg-blue-700' : '' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
@@ -173,7 +160,17 @@
                 </a>
                 @endif
 
-                <!-- Logout -->
+                <a href="{{ route('profile.edit') }}"
+                    class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-blue-700 {{ request()->routeIs('profile.edit') ? 'bg-blue-700' : '' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Pengaturan Akun
+                </a>
+
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit"
@@ -188,13 +185,10 @@
             </nav>
         </aside>
 
-        <!-- Main Content Area -->
         <div class="flex flex-col min-h-screen lg:ml-64">
 
-            <!-- Top Navigation Bar -->
             <header class="bg-white shadow-sm sticky top-0 z-40">
                 <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
-                    <!-- Mobile menu button -->
                     <button @click="sidebarOpen = true" class="lg:hidden text-gray-500 hover:text-gray-700">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -202,22 +196,16 @@
                         </svg>
                     </button>
 
-                    <!-- Page Header -->
                     <div class="flex-1 min-w-0 ml-4 lg:ml-0">
                         @if (isset($header))
                         {{ $header }}
                         @endif
                     </div>
 
-                    <!-- Right Side Icons -->
                     <div class="flex items-center space-x-4">
-                        <!-- Notifications -->
-
-
-                        <!-- User Dropdown (Desktop) -->
-                        <div class="hidden sm:block" x-data="{ open: false }">
+                        <div class="hidden sm:block relative" x-data="{ open: false }">
                             <button @click="open = !open"
-                                class="flex items-center space-x-2 text-gray-700 hover:text-gray-900">
+                                class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
                                 <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                                     <span class="text-white font-bold text-sm">
                                         {{ substr(Auth::user()->name, 0, 1) }}
@@ -231,12 +219,19 @@
                             </button>
 
                             <div x-show="open" @click.away="open = false" x-cloak
-                                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
+                                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 z-50">
+                                
+                                <a href="{{ route('profile.edit') }}"
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-150">
+                                    Pengaturan Akun
+                                </a>
+
+                                <div class="border-t border-gray-100 my-1"></div>
 
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit"
-                                        class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 transition duration-150">
                                         Keluar
                                     </button>
                                 </form>
@@ -246,12 +241,10 @@
                 </div>
             </header>
 
-            <!-- Page Content -->
             <main class="flex-1">
                 {{ $slot }}
             </main>
 
-            <!-- Footer -->
             <footer class="bg-white border-t border-gray-200">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <div class="flex flex-col md:flex-row justify-between items-center">
@@ -269,7 +262,6 @@
             </footer>
         </div>
 
-        <!-- Overlay for mobile -->
         <div x-show="sidebarOpen" @click="sidebarOpen = false" x-cloak
             class="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"></div>
     </div>
