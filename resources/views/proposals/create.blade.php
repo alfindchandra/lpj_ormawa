@@ -378,8 +378,8 @@ function toggleLokasiSections() {
 
 function clearSectionInputs(section) {
     section.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
-        if (input.type === 'number' && input.classList.contains('jumlah-input')) {
-            input.value = '';
+        if (input.classList.contains('jumlah-input')) {
+            input.value = '1'; // Default ke 1 untuk menghindari error pembagian atau perkalian kosong
         } else {
             input.value = '';
         }
