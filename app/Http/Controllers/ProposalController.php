@@ -82,6 +82,10 @@ class ProposalController extends Controller
 
         DB::transaction(function () use ($validated, $filePath, $request, $user) {
             $proposal = Proposal::create([
+                'barang_diperlukan' => '',
+                'sewa_tempat'       => '',
+                'jasa'              => '',
+                'bahan'             => '',
                 'user_id'         => $user->id,
                 'period_id'       => $validated['period_id'],
                 'kode_proposal'   => Proposal::generateKodeProposal(),
@@ -109,8 +113,7 @@ class ProposalController extends Controller
 
     public function show(Proposal $proposal)
     {
-        $proposal->load(['user', 'activity', 'period', 'internalItems', 'externalItems', 'barangItems']);
-        return view('proposals.show', compact('proposal'));
+        $proposal->load(['user', 'activity', 'period', 'internalItems', 'externalItems', 'barangItems']);        return view('proposals.show', compact('proposal'));
     }
 
     public function edit(Proposal $proposal)
