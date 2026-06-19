@@ -12,14 +12,17 @@ class Proposal extends Model
     protected $fillable = [
         'user_id', 'period_id', 'kode_proposal', 'nama_kegiatan', 'deskripsi',
         'tanggal_mulai', 'tanggal_selesai', 'tipe_lokasi', 'tempat',
-        'barang_diperlukan', 'sewa_tempat', 'jasa', 'bahan',
         'anggaran', 'file_proposal', 'status', 'catatan_bem', 'catatan_admin',
+        
+        // Tambahkan ini agar data kebersihan tersimpan aman
+        'kebersihan_keterangan', 'kebersihan_biaya', 
     ];
 
     protected $casts = [
         'tanggal_mulai'  => 'date',
         'tanggal_selesai'=> 'date',
         'anggaran'       => 'decimal:2',
+        'kebersihan_biaya'=> 'decimal:2', // Tambahkan cast untuk kebersihan_biaya
     ];
 
     // ── Relasi ──────────────────────────────────────────────────────────────
@@ -44,19 +47,35 @@ class Proposal extends Model
         return $this->hasMany(ProposalItem::class)->orderBy('urutan');
     }
 
-    public function internalItems(): HasMany
+    // Perbarui Method Relasi sesuai dengan kategori yang dinamis sekarang:
+    public function konsumsiItems(): HasMany
     {
-        return $this->hasMany(ProposalItem::class)->where('tipe', 'internal')->orderBy('urutan');
+        return $this->hasMany(ProposalItem::class)->where('tipe', 'konsumsi')->orderBy('urutan');
     }
 
-    public function externalItems(): HasMany
+    public function atkItems(): HasMany
     {
-        return $this->hasMany(ProposalItem::class)->where('tipe', 'external')->orderBy('urutan');
+        return $this->hasMany(ProposalItem::class)->where('tipe', 'atk')->orderBy('urutan');
     }
 
-    public function barangItems(): HasMany
+    public function honorItems(): HasMany
     {
-        return $this->hasMany(ProposalItem::class)->where('tipe', 'barang')->orderBy('urutan');
+        return $this->hasMany(ProposalItem::class)->where('tipe', 'honor')->orderBy('urutan');
+    }
+
+    public function sewaItems(): HasMany
+    {
+        return $this->hasMany(ProposalItem::class)->where('tipe', 'sewa')->orderBy('urutan');
+    }
+
+    public function dokumentasiItems(): HasMany
+    {
+        return $this->hasMany(ProposalItem::class)->where('tipe', 'dokumentasi')->orderBy('urutan');
+    }
+
+    public function transportasiItems(): HasMany
+    {
+        return $this->hasMany(ProposalItem::class)->where('tipe', 'transportasi')->orderBy('urutan');
     }
 
     // ── Helper ──────────────────────────────────────────────────────────────

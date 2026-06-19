@@ -92,15 +92,14 @@
                             </div>
                         </div>
 
-                        {{-- ── Tipe Lokasi ─────────────────────────────────────────────── --}}
+                        {{-- ── Tipe Lokasi (Opsional) ─────────────────────────────────── --}}
                         <div class="mb-6">
                             <label for="tipe_lokasi" class="block text-sm font-medium text-gray-700 mb-2">
-                                Tipe Lokasi <span class="text-red-500">*</span>
+                                Tipe Lokasi <span class="text-xs text-gray-400">(Opsional)</span>
                             </label>
                             <select name="tipe_lokasi" id="tipe_lokasi"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                                required>
-                                <option value="">-- Pilih Tipe Lokasi --</option>
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option value="">-- Pilih Tipe Lokasi (Boleh Kosong) --</option>
                                 <option value="internal" {{ old('tipe_lokasi') == 'internal' ? 'selected' : '' }}>Internal Kampus</option>
                                 <option value="eksternal" {{ old('tipe_lokasi') == 'eksternal' ? 'selected' : '' }}>Eksternal Kampus</option>
                             </select>
@@ -118,197 +117,65 @@
                             @error('tempat')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
 
-                        {{-- ═══════════════════════════════════════════════════════════════
-                             SECTION INTERNAL — hanya tampil jika tipe_lokasi = internal
-                        ════════════════════════════════════════════════════════════════ --}}
-                        <div id="section-internal" class="hidden">
-                            <div class="mb-6">
-                                <div class="flex items-center justify-between mb-3">
-                                    <label class="block text-sm font-semibold text-gray-700">
-                                        Internal: Anggaran Perlengkapan &amp; Kegiatan
-                                    </label>
-                                    <button type="button" onclick="addRow('internal')"
-                                        class="px-3 py-1.5 bg-blue-500 text-white text-xs rounded hover:bg-blue-600">+ Tambah Item</button>
-                                </div>
-                                <div class="overflow-x-auto border rounded-lg">
-                                    <table class="w-full text-sm">
-                                        <thead class="bg-gray-50 text-xs uppercase text-gray-500">
-                                            <tr>
-                                                <th class="px-4 py-3 text-left">Nama Barang / Item</th>
-                                                <th class="px-4 py-3 text-center w-24">Jumlah</th>
-                                                <th class="px-4 py-3 text-right w-36">Harga/Satuan</th>
-                                                <th class="px-4 py-3 text-right w-36">Subtotal</th>
-                                                <th class="px-4 py-3 w-16"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tbody-internal">
-                                            @php $internals = old('internal_items', [['nama' => '', 'jumlah' => 1, 'harga' => '']]); @endphp
-                                            @foreach($internals as $i => $item)
-                                            <tr class="border-t item-row" data-section="internal">
-                                                <td class="px-4 py-2">
-                                                    <input type="text" name="internal_items[{{ $i }}][nama]"
-                                                        class="w-full px-2 py-1.5 border rounded text-sm"
-                                                        placeholder="Contoh: Kebersihan, Konsumsi, Banner"
-                                                        value="{{ $item['nama'] ?? '' }}">
-                                                </td>
-                                                <td class="px-4 py-2">
-                                                    <input type="number" name="internal_items[{{ $i }}][jumlah]"
-                                                        class="w-full px-2 py-1.5 border rounded text-sm jumlah-input"
-                                                        min="1" value="{{ $item['jumlah'] ?? 1 }}"
-                                                        oninput="recalcRow(this)">
-                                                </td>
-                                                <td class="px-4 py-2">
-                                                    <input type="number" name="internal_items[{{ $i }}][harga]"
-                                                        class="w-full px-2 py-1.5 border rounded text-sm harga-input"
-                                                        step="1" min="0" placeholder="0"
-                                                        value="{{ $item['harga'] ?? '' }}"
-                                                        oninput="recalcRow(this)">
-                                                </td>
-                                                <td class="px-4 py-2 text-right text-gray-700 font-medium subtotal-display">Rp 0</td>
-                                                <td class="px-4 py-2 text-center">
-                                                    <button type="button" onclick="removeRow(this)"
-                                                        class="text-red-500 hover:text-red-700 text-lg leading-none">&times;</button>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+                        {{-- ── Rincian Anggaran ── --}}
+                        <div id="section-anggaran">
+                            <div class="mb-2 pb-2 border-b-2 border-blue-200">
+                                <h3 class="text-base font-bold text-blue-800" id="label-anggaran-judul">Rincian Anggaran</h3>
+                            </div>
+
+                            @php $kategoriBlank = [['nama' => '', 'jumlah' => '', 'harga' => '']]; @endphp
+                            
+                            <div class="mt-5">
+                                <x-budget-category-table title="1. Konsumsi" subtitle="Makanan, snack, air minum, dll" section="konsumsi" :items="old('konsumsi_items', $kategoriBlank)" placeholder="Contoh: Nasi kotak" />
+                            </div>
+
+                            <div class="mt-5">
+                                <x-budget-category-table title="2. Barang Habis Pakai & ATK" subtitle="Pulpen, banner, dll" section="atk" :items="old('atk_items', $kategoriBlank)" placeholder="Contoh: Banner" />
+                            </div>
+
+                            <div class="mt-5">
+                                <x-budget-category-table title="3. Honor dan Jasa" subtitle="MC, pemateri — satuan: orang" section="honor" :items="old('honor_items', $kategoriBlank)" placeholder="Contoh: MC" unit-label="orang" />
+                            </div>
+
+                            <div class="mt-5">
+                                <x-budget-category-table title="4. Penyewaan" subtitle="Tempat, alat, kamera, dll" section="sewa" :items="old('sewa_items', $kategoriBlank)" placeholder="Contoh: Sewa aula" />
+                            </div>
+
+                            <div id="cat-dokumentasi" class="mt-5 hidden">
+                                <x-budget-category-table title="5. Dokumentasi Kegiatan" subtitle="Print, cetak undangan, dll" section="dokumentasi" :items="old('dokumentasi_items', $kategoriBlank)" placeholder="Contoh: Print proposal" />
+                            </div>
+
+                            <div id="cat-transportasi" class="mt-5 hidden">
+                                <x-budget-category-table title="5. Transportasi" subtitle="Biaya transportasi panitia" section="transportasi" :items="old('transportasi_items', $kategoriBlank)" placeholder="Contoh: Bensin" />
+                            </div>
+
+                            <div id="cat-kebersihan" class="mt-5 hidden">
+                                <div class="rounded-lg border border-gray-200 overflow-hidden bg-white">
+                                    <div class="flex items-center justify-between bg-gray-50 px-4 py-3 border-b border-gray-200">
+                                        <span class="text-sm font-semibold text-gray-800">6. Kebersihan</span>
+                                    </div>
+                                    <div class="p-4">
+                                        <textarea name="kebersihan_keterangan" rows="2" class="w-full rounded-md border-gray-300 text-sm" placeholder="Rincian kebersihan">{{ old('kebersihan_keterangan') }}</textarea>
+                                        <div class="mt-2 flex items-center gap-3">
+                                            <label class="text-xs font-medium text-gray-600">Biaya Kebersihan (Rp)</label>
+                                            <input type="number" name="kebersihan_biaya" id="kebersihan_biaya" class="flex-1 rounded-md border-gray-300 text-sm" min="0" placeholder="0" value="{{ old('kebersihan_biaya') }}" oninput="updateTotalAnggaran()">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- ═══════════════════════════════════════════════════════════════
-                             SECTION EXTERNAL JASA — hanya tampil jika tipe_lokasi = eksternal
-                        ════════════════════════════════════════════════════════════════ --}}
-                        <div id="section-external" class="hidden">
-                            <div class="mb-6">
-                                <div class="flex items-center justify-between mb-3">
-                                    <label class="block text-sm font-semibold text-gray-700">
-                                        Eksternal: Jasa / Layanan (MC, Catering, dll)
-                                    </label>
-                                    <button type="button" onclick="addRow('external')"
-                                        class="px-3 py-1.5 bg-blue-500 text-white text-xs rounded hover:bg-blue-600">+ Tambah Jasa</button>
-                                </div>
-                                <div class="overflow-x-auto border rounded-lg">
-                                    <table class="w-full text-sm">
-                                        <thead class="bg-gray-50 text-xs uppercase text-gray-500">
-                                            <tr>
-                                                <th class="px-4 py-3 text-left">Jasa / Layanan</th>
-                                                <th class="px-4 py-3 text-center w-24">Jumlah</th>
-                                                <th class="px-4 py-3 text-right w-36">Harga/Satuan</th>
-                                                <th class="px-4 py-3 text-right w-36">Subtotal</th>
-                                                <th class="px-4 py-3 w-16"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tbody-external">
-                                            @php $externals = old('external_items', [['jasa' => '', 'jumlah' => 1, 'harga' => '']]); @endphp
-                                            @foreach($externals as $i => $item)
-                                            <tr class="border-t item-row" data-section="external">
-                                                <td class="px-4 py-2">
-                                                    <input type="text" name="external_items[{{ $i }}][jasa]"
-                                                        class="w-full px-2 py-1.5 border rounded text-sm"
-                                                        placeholder="Contoh: Jasa MC, Catering, Photography"
-                                                        value="{{ $item['jasa'] ?? '' }}">
-                                                </td>
-                                                <td class="px-4 py-2">
-                                                    <input type="number" name="external_items[{{ $i }}][jumlah]"
-                                                        class="w-full px-2 py-1.5 border rounded text-sm jumlah-input"
-                                                        min="1" value="{{ $item['jumlah'] ?? 1 }}"
-                                                        oninput="recalcRow(this)">
-                                                </td>
-                                                <td class="px-4 py-2">
-                                                    <input type="number" name="external_items[{{ $i }}][harga]"
-                                                        class="w-full px-2 py-1.5 border rounded text-sm harga-input"
-                                                        step="1" min="0" placeholder="0"
-                                                        value="{{ $item['harga'] ?? '' }}"
-                                                        oninput="recalcRow(this)">
-                                                </td>
-                                                <td class="px-4 py-2 text-right text-gray-700 font-medium subtotal-display">Rp 0</td>
-                                                <td class="px-4 py-2 text-center">
-                                                    <button type="button" onclick="removeRow(this)"
-                                                        class="text-red-500 hover:text-red-700 text-lg leading-none">&times;</button>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- ═══════════════════════════════════════════════════════════════
-                             SECTION BARANG — SELALU TAMPIL jika lokasi sudah dipilih
-                             (barang ATK ikut ke internal maupun eksternal)
-                        ════════════════════════════════════════════════════════════════ --}}
-                        <div id="section-barang" class="hidden">
-                            <div class="mb-6">
-                                <div class="flex items-center justify-between mb-3">
-                                    <label class="block text-sm font-semibold text-gray-700">
-                                        Barang: ATK / Perlengkapan
-                                        <span class="ml-1 text-xs font-normal text-gray-500">(berlaku untuk semua tipe lokasi)</span>
-                                    </label>
-                                    <button type="button" onclick="addRow('barang')"
-                                        class="px-3 py-1.5 bg-blue-500 text-white text-xs rounded hover:bg-blue-600">+ Tambah Barang</button>
-                                </div>
-                                <div class="overflow-x-auto border rounded-lg">
-                                    <table class="w-full text-sm">
-                                        <thead class="bg-gray-50 text-xs uppercase text-gray-500">
-                                            <tr>
-                                                <th class="px-4 py-3 text-left">Nama Barang</th>
-                                                <th class="px-4 py-3 text-center w-24">Jumlah</th>
-                                                <th class="px-4 py-3 text-right w-36">Harga/Satuan</th>
-                                                <th class="px-4 py-3 text-right w-36">Subtotal</th>
-                                                <th class="px-4 py-3 w-16"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tbody-barang">
-                                            @php $barangs = old('barang_items', [['nama' => '', 'jumlah' => 1, 'harga' => '']]); @endphp
-                                            @foreach($barangs as $i => $item)
-                                            <tr class="border-t item-row" data-section="barang">
-                                                <td class="px-4 py-2">
-                                                    <input type="text" name="barang_items[{{ $i }}][nama]"
-                                                        class="w-full px-2 py-1.5 border rounded text-sm"
-                                                        placeholder="Contoh: Kertas Banner, Spidol, Tinta"
-                                                        value="{{ $item['nama'] ?? '' }}">
-                                                </td>
-                                                <td class="px-4 py-2">
-                                                    <input type="number" name="barang_items[{{ $i }}][jumlah]"
-                                                        class="w-full px-2 py-1.5 border rounded text-sm jumlah-input"
-                                                        min="1" value="{{ $item['jumlah'] ?? 1 }}"
-                                                        oninput="recalcRow(this)">
-                                                </td>
-                                                <td class="px-4 py-2">
-                                                    <input type="number" name="barang_items[{{ $i }}][harga]"
-                                                        class="w-full px-2 py-1.5 border rounded text-sm harga-input"
-                                                        step="1" min="0" placeholder="0"
-                                                        value="{{ $item['harga'] ?? '' }}"
-                                                        oninput="recalcRow(this)">
-                                                </td>
-                                                <td class="px-4 py-2 text-right text-gray-700 font-medium subtotal-display">Rp 0</td>
-                                                <td class="px-4 py-2 text-center">
-                                                    <button type="button" onclick="removeRow(this)"
-                                                        class="text-red-500 hover:text-red-700 text-lg leading-none">&times;</button>
-                                                </td>
-                                            </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- ── Total Anggaran ──────────────────────────────────────────── --}}
-                        <div class="mb-6">
+                        {{-- ── Total Anggaran (Ubah Jadi Opsional Terbuka) ──────────────── --}}
+                        <div class="mt-6 mb-6">
                             <label for="anggaran" class="block text-sm font-medium text-gray-700 mb-2">
-                                Total Anggaran (Rp) <span class="text-red-500">*</span>
+                                Total Anggaran (Rp) <span class="text-xs text-gray-400">(Opsional/Otomatis)</span>
                             </label>
                             <div class="relative">
                                 <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 text-sm">Rp</span>
-                                <input type="number" name="anggaran" id="anggaran" step="1" min="0" readonly
-                                    class="mt-1 block w-full pl-10 rounded-md border-gray-300 shadow-sm bg-gray-50 focus:border-blue-500 focus:ring-blue-500 font-semibold"
-                                    value="{{ old('anggaran', 0) }}" required>
+                                <input type="number" name="anggaran" id="anggaran" step="1" min="0"
+                                    class="mt-1 block w-full pl-10 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 font-semibold"
+                                    value="{{ old('anggaran') }}">
                             </div>
-                            <p class="mt-1 text-xs text-gray-500">Dihitung otomatis dari semua item di atas.</p>
                             @error('anggaran')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
 
@@ -318,21 +185,14 @@
                                 File Proposal (PDF, Max 5MB) <span class="text-red-500">*</span>
                             </label>
                             <input type="file" name="file_proposal" id="file_proposal" accept=".pdf"
-                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:bg-blue-50 file:text-blue-700"
                                 required>
                             @error('file_proposal')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
 
-                        {{-- ── Buttons ─────────────────────────────────────────────────── --}}
                         <div class="flex items-center justify-end gap-4 pt-4 border-t">
-                            <a href="{{ route('proposals.index') }}"
-                                class="px-4 py-2 bg-gray-200 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-300">
-                                Batal
-                            </a>
-                            <button type="submit"
-                                class="px-6 py-2 bg-blue-600 rounded-md text-sm font-semibold text-white hover:bg-blue-700">
-                                Ajukan Proposal
-                            </button>
+                            <a href="{{ route('proposals.index') }}" class="px-4 py-2 bg-gray-200 rounded-md text-sm text-gray-700">Batal</a>
+                            <button type="submit" class="px-6 py-2 bg-blue-600 rounded-md text-sm font-semibold text-white">Ajukan Proposal</button>
                         </div>
                     </form>
                 </div>
@@ -341,131 +201,103 @@
     </div>
 
 <script>
-// ── Counter untuk index baris dinamis ──────────────────────────────────────
-const counters = { internal: 0, external: 0, barang: 0 };
+const ALL_SECTIONS = ['konsumsi','atk','honor','sewa','dokumentasi','transportasi'];
 
-// ── Toggle visibility section berdasarkan tipe_lokasi ─────────────────────
 function onLokasiChange() {
     const tipe = document.getElementById('tipe_lokasi').value;
+    const catDokumentasi  = document.getElementById('cat-dokumentasi');
+    const catTransportasi = document.getElementById('cat-transportasi');
+    const catKebersihan   = document.getElementById('cat-kebersihan');
 
-    const sInternal = document.getElementById('section-internal');
-    const sExternal = document.getElementById('section-external');
-    const sBarang   = document.getElementById('section-barang');
-
-    // Sembunyikan semua dulu
-    sInternal.classList.add('hidden');
-    sExternal.classList.add('hidden');
-    sBarang.classList.add('hidden');
-
-    if (tipe === 'internal') {
-        sInternal.classList.remove('hidden');
-        sBarang.classList.remove('hidden');   // barang selalu ikut
-    } else if (tipe === 'eksternal') {
-        sExternal.classList.remove('hidden');
-        sBarang.classList.remove('hidden');   // barang selalu ikut
+    if (!tipe) {
+        catDokumentasi.classList.add('hidden');
+        catTransportasi.classList.add('hidden');
+        catKebersihan.classList.add('hidden');
+        updateTotalAnggaran();
+        return;
     }
 
+    if (tipe === 'internal') {
+        catDokumentasi.classList.remove('hidden');
+        catTransportasi.classList.add('hidden');
+        catKebersihan.classList.remove('hidden');
+    } else {
+        catDokumentasi.classList.add('hidden');
+        catTransportasi.classList.remove('hidden');
+        catKebersihan.classList.add('hidden');
+    }
     updateTotalAnggaran();
 }
 
-// ── Tambah baris dinamis ───────────────────────────────────────────────────
 function addRow(section) {
     const tbody = document.getElementById('tbody-' + section);
-    const idx   = ++counters[section] + tbody.querySelectorAll('tr').length;
-
-    let nameCell = '';
-    if (section === 'external') {
-        nameCell = `<input type="text" name="external_items[${idx}][jasa]"
-            class="w-full px-2 py-1.5 border rounded text-sm"
-            placeholder="Contoh: Jasa MC, Catering">`;
-    } else {
-        const prefix = section === 'internal' ? 'internal_items' : 'barang_items';
-        const ph     = section === 'internal' ? 'Contoh: Kebersihan, Konsumsi' : 'Contoh: Spidol, Kertas';
-        nameCell = `<input type="text" name="${prefix}[${idx}][nama]"
-            class="w-full px-2 py-1.5 border rounded text-sm"
-            placeholder="${ph}">`;
-    }
-
-    const jumlahName = section === 'internal' ? `internal_items[${idx}][jumlah]`
-                     : section === 'external'  ? `external_items[${idx}][jumlah]`
-                     :                           `barang_items[${idx}][jumlah]`;
-    const hargaName  = section === 'internal' ? `internal_items[${idx}][harga]`
-                     : section === 'external'  ? `external_items[${idx}][harga]`
-                     :                           `barang_items[${idx}][harga]`;
+    const idx   = tbody.querySelectorAll('tr').length + 1;
 
     const tr = document.createElement('tr');
     tr.className = 'border-t item-row';
     tr.dataset.section = section;
     tr.innerHTML = `
-        <td class="px-4 py-2">${nameCell}</td>
-        <td class="px-4 py-2">
-            <input type="number" name="${jumlahName}"
-                class="w-full px-2 py-1.5 border rounded text-sm jumlah-input"
-                min="1" value="1" oninput="recalcRow(this)">
-        </td>
-        <td class="px-4 py-2">
-            <input type="number" name="${hargaName}"
-                class="w-full px-2 py-1.5 border rounded text-sm harga-input"
-                step="1" min="0" placeholder="0" oninput="recalcRow(this)">
-        </td>
-        <td class="px-4 py-2 text-right text-gray-700 font-medium subtotal-display">Rp 0</td>
-        <td class="px-4 py-2 text-center">
-            <button type="button" onclick="removeRow(this)"
-                class="text-red-500 hover:text-red-700 text-lg leading-none">&times;</button>
-        </td>`;
+        <td class="px-3 py-2"><input type="text" name="${section}_items[${idx}][nama]" class="w-full px-2 py-1.5 border rounded text-sm"></td>
+        <td class="px-3 py-2"><input type="number" name="${section}_items[${idx}][jumlah]" class="w-full px-2 py-1.5 border rounded text-sm jumlah-input" min="0" value="" placeholder="0" oninput="recalcRow(this)"></td>
+        <td class="px-3 py-2"><input type="number" name="${section}_items[${idx}][harga]" class="w-full px-2 py-1.5 border rounded text-sm harga-input" min="0" placeholder="0" oninput="recalcRow(this)"></td>
+        <td class="px-3 py-2 text-right text-gray-700 font-medium subtotal-display text-sm">Rp 0</td>
+        <td class="px-3 py-2 text-center"><button type="button" onclick="removeRow(this)" class="text-red-400 text-xl">&times;</button></td>`;
     tbody.appendChild(tr);
 }
 
-// ── Hapus baris ────────────────────────────────────────────────────────────
 function removeRow(btn) {
     btn.closest('tr').remove();
     updateTotalAnggaran();
 }
 
-// ── Hitung subtotal per baris ──────────────────────────────────────────────
 function recalcRow(input) {
-    const row     = input.closest('tr');
-    const jumlah  = parseFloat(row.querySelector('.jumlah-input')?.value) || 0;
-    const harga   = parseFloat(row.querySelector('.harga-input')?.value)  || 0;
-    const sub     = jumlah * harga;
-    const display = row.querySelector('.subtotal-display');
-    if (display) display.textContent = 'Rp ' + sub.toLocaleString('id-ID', { maximumFractionDigits: 0 });
+    const row    = input.closest('tr');
+    const jumlah = parseFloat(row.querySelector('.jumlah-input')?.value) || 0;
+    const harga  = parseFloat(row.querySelector('.harga-input')?.value)  || 0;
+    const sub    = jumlah * harga;
+    const disp   = row.querySelector('.subtotal-display');
+    if (disp) disp.textContent = 'Rp ' + sub.toLocaleString('id-ID');
     updateTotalAnggaran();
 }
 
-// ── Hitung total anggaran dari semua section yang tampil ───────────────────
 function updateTotalAnggaran() {
     let total = 0;
-    document.querySelectorAll('.item-row').forEach(row => {
-        // Hanya hitung dari section yang tidak hidden
-        const section = row.dataset.section;
-        const sectionEl = document.getElementById('section-' + section);
-        if (!sectionEl || sectionEl.classList.contains('hidden')) return;
+    let hasInput = false;
 
-        const jumlah = parseFloat(row.querySelector('.jumlah-input')?.value) || 0;
-        const harga  = parseFloat(row.querySelector('.harga-input')?.value)  || 0;
+    document.querySelectorAll('.item-row').forEach(row => {
+        const section = row.dataset.section;
+        const specificCat = document.getElementById('cat-' + section);
+        if (specificCat && specificCat.classList.contains('hidden')) return;
+
+        const jVal = row.querySelector('.jumlah-input')?.value;
+        const hVal = row.querySelector('.harga-input')?.value;
+
+        if (jVal || hVal) hasInput = true;
+
+        const jumlah = parseFloat(jVal) || 0;
+        const harga  = parseFloat(hVal) || 0;
         total += jumlah * harga;
     });
 
+    const kVal = document.getElementById('kebersihan_biaya')?.value;
+    if (kVal) {
+        hasInput = true;
+        const catKebersihan = document.getElementById('cat-kebersihan');
+        if (catKebersihan && !catKebersihan.classList.contains('hidden')) {
+            total += parseFloat(kVal) || 0;
+        }
+    }
+
     const el = document.getElementById('anggaran');
-    if (el) el.value = Math.round(total);
+    if (el) {
+        // Jika tidak ada input apa pun, kosongkan field total anggaran alih-alih menampilkan angka 0
+        el.value = hasInput ? Math.round(total) : '';
+    }
 }
 
-// ── Init subtotal semua baris (untuk old() setelah validasi gagal) ─────────
-function initAllSubtotals() {
-    document.querySelectorAll('.item-row').forEach(row => {
-        const h = row.querySelector('.harga-input');
-        if (h) recalcRow(h);
-    });
-}
-
-// ── Pasang event listener ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('tipe_lokasi').addEventListener('change', onLokasiChange);
-
-    // Jalankan saat load untuk handle old() value setelah error validasi
     onLokasiChange();
-    initAllSubtotals();
 });
 </script>
 </x-app-layout>
