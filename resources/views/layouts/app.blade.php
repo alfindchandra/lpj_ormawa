@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 
     <title>{{ config('app.name', 'ORMAWA Monitoring') }} - @yield('title', 'Dashboard')</title>
     <link class="rounded-full" rel="icon" type="image/png" href="{{ asset('xlogo.png') }}" />
@@ -125,7 +125,7 @@
                     Monitoring Kegiatan
                 </a>
 
-                @if(in_array(Auth::user()->role, ['admin', 'bem']))
+               
                 <a href="{{ route('kabinet.index') }}"
                     class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-blue-700 {{ request()->routeIs('kabinet.*') ? 'bg-blue-700' : '' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,7 +134,7 @@
                     </svg>
                     Pengurus Inti
                 </a>
-                @endif
+                
 
                 <a href="{{ route('archives.index') }}"
                     class="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-blue-700 {{ request()->routeIs('archives.*') ? 'bg-blue-700' : '' }}">
@@ -241,7 +241,61 @@
                 </div>
             </header>
 
-            <main class="flex-1">
+            {{-- ── CONTAINER CONTENT & BREADCRUMBS ── --}}
+            <main class="flex-1 py-6 px-4 sm:px-6 lg:px-8">
+                
+                {{-- ── LOGIKK GENERATE BREADCRUMBS DINAMIS ── --}}
+                @php
+                    $segments = request()->segments();
+                    $url = '';
+                @endphp
+                <nav class="flex mb-1 px-4 py-1 text-gray-500 rounded-xl bg-white border border-gray-200/80 shadow-sm w-max max-w-full" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-2 text-xs font-medium tracking-wide">
+                        <li class="inline-flex items-center">
+                            <a href="{{ route('dashboard') }}" class="inline-flex items-center text-gray-600 hover:text-blue-600 transition-colors">
+                                <svg class="w-3.5 h-3.5 me-2 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+                                </svg>
+                                Beranda
+                            </a>
+                        </li>
+                        @foreach($segments as $index => $segment)
+                            @php
+                                $url .= '/' . $segment;
+                                // Abaikan segmen berupa angka (ID) agar breadcrumbs tetap bersih dan terbaca
+                                if (is_numeric($segment) || strlen($segment) > 30) continue;
+                                
+                                // Pemetaan nama segmen URL ke Bahasa Indonesia yang rapi
+                                $replacements = [
+                                    'dashboard'  => 'Dashboard',
+                                    'proposals'  => 'Proposal Kegiatan',
+                                    'create'     => 'Tambah Baru',
+                                    'edit'       => 'Edit Data',
+                                    'show'       => 'Detail',
+                                    'kabinet'    => 'Pengurus Inti',
+                                    'activities' => 'Monitoring Kegiatan',
+                                    'archives'   => 'Arsip Kegiatan',
+                                    'profile'    => 'Pengaturan Akun'
+                                ];
+                                $label = $replacements[$segment] ?? ucfirst(str_replace('-', ' ', $segment));
+                            @endphp
+                            <li>
+                                <div class="flex items-center">
+                                    <svg class="block w-3 h-3 mx-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                    @if($index == count($segments) - 1)
+                                        <span class="ms-1 text-gray-400 font-bold select-none" aria-current="page">{{ $label }}</span>
+                                    @else
+                                        <a href="{{ url($url) }}" class="ms-1 text-gray-600 hover:text-blue-600 transition-colors font-medium">{{ $label }}</a>
+                                    @endif
+                                </div>
+                            </li>
+                        @endforeach
+                    </ol>
+                </nav>
+
+                {{-- SLOT CONTENT VIEW HALAMAN --}}
                 {{ $slot }}
             </main>
 

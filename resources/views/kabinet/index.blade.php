@@ -36,7 +36,7 @@
             url.searchParams.set('tab', target);
             window.history.pushState({}, '', url);
         }
-    }" class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen">
+    }" class="py-3 px-4 sm:px-6 lg:px-4 max-w-7xl mx-auto min-h-screen">
 
         <x-slot name="header">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mr-4">

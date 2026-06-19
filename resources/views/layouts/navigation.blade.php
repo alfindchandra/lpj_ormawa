@@ -38,10 +38,7 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <!-- Profil / Pengaturan Akun -->
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Pengaturan Akun') }}
-                        </x-dropdown-link>
+
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
@@ -72,7 +69,7 @@
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu (Mobile) -->
+    <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
@@ -88,10 +85,7 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <!-- Pengaturan Akun (Mobile) -->
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Pengaturan Akun') }}
-                </x-responsive-nav-link>
+
 
                 <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">

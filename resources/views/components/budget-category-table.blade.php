@@ -2,7 +2,7 @@
     'title',
     'subtitle',
     'section',
-    'items' => [['nama' => '', 'jumlah' => 1, 'harga' => '']],
+    'items' => [['nama' => '', 'jumlah' => '', 'harga' => '']], // DIUBAH: default jumlah kosong (''), bukan 1
     'placeholder' => '',
     'unitLabel' => 'item'
 ])
@@ -41,16 +41,16 @@
                             name="{{ $section }}_items[{{ $index }}][nama]"
                             value="{{ old($section.'._items.'.$index.'.nama', $item['nama'] ?? '') }}"
                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
-                            placeholder="{{ $placeholder }}" required>
+                            placeholder="{{ $placeholder }}">
                     </td>
                     
                     <td class="px-4 py-2">
                         <div class="relative rounded-md shadow-sm">
                             <input type="number" 
                                 name="{{ $section }}_items[{{ $index }}][jumlah]"
-                                value="{{ old($section.'._items.'.$index.'.jumlah', $item['jumlah'] ?? 1) }}"
+                                value="{{ old($section.'._items.'.$index.'.jumlah', $item['jumlah'] ?? '') }}"
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm pr-12 jumlah-input"
-                                min="1" oninput="recalcRow(this)" required>
+                                min="0" placeholder="0" oninput="recalcRow(this)">
                             <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                 <span class="text-gray-400 text-xs">{{ $unitLabel }}</span>
                             </div>
@@ -62,7 +62,7 @@
                             name="{{ $section }}_items[{{ $index }}][harga]"
                             value="{{ old($section.'._items.'.$index.'.harga', $item['harga'] ?? '') }}"
                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm harga-input"
-                            step="1" min="0" placeholder="0" oninput="recalcRow(this)" required>
+                            step="1" min="0" placeholder="0" oninput="recalcRow(this)">
                     </td>
                     
                     <td class="px-4 py-2 text-right text-gray-700 font-medium subtotal-display align-middle">

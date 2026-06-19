@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('proposal_id')->constrained()->cascadeOnDelete();
 
             // Tipe item: 'internal', 'external', 'barang'
-            $table->enum('tipe', ['internal', 'external', 'barang']);
+           $table->string('tipe');
 
             // Nama barang/jasa (untuk internal & barang)
             $table->string('nama')->nullable();

@@ -61,8 +61,11 @@ class DashboardController extends Controller
             ];
             
             $my_proposals = Proposal::where('user_id', $user->id)->latest()->get();
+            
+            // PERBAIKAN: Tambahkan filter nama ormawa spesifik milik user yang login
             $kabinetsAktif = Kabinet::where('is_active', true)
                 ->where('ormawa_type', 'hmp')
+                ->where('ormawa_name', $user->ormawa_name) // Hanya HMP milik sendiri
                 ->with('period')
                 ->get();
             
@@ -82,14 +85,16 @@ class DashboardController extends Controller
             ];
             
             $my_proposals = Proposal::where('user_id', $user->id)->latest()->get();
+            
+            // PERBAIKAN: Tambahkan filter nama ormawa spesifik milik user yang login
             $kabinetsAktif = Kabinet::where('is_active', true)
                 ->where('ormawa_type', 'ukm')
+                ->where('ormawa_name', $user->ormawa_name) // Hanya UKM milik sendiri
                 ->with('period')
                 ->get();
             
             return view('dashboard.ukm', compact('stats', 'my_proposals', 'activePeriod', 'kabinetsAktif'));
         }
-        
         // Ormawa Dashboard (default)
         $stats = [
             'my_proposals' => Proposal::where('user_id', $user->id)->count(),

@@ -130,6 +130,8 @@ class ProposalController extends Controller
         return view('proposals.show', compact('proposal'));
     }
 
+
+
     public function edit(Proposal $proposal)
     {
         $user = Auth::user();
@@ -137,7 +139,16 @@ class ProposalController extends Controller
             abort(403, 'Anda tidak berhak mengedit proposal ini.');
         }
 
-        $proposal->load('items');
+        // DIUBAH: Load semua relasi kategori anggaran dinamis yang baru
+        $proposal->load([
+            'konsumsiItems', 
+            'atkItems', 
+            'honorItems', 
+            'sewaItems', 
+            'dokumentasiItems', 
+            'transportasiItems'
+        ]);
+
         $periods      = Period::orderBy('is_active', 'desc')->orderBy('tahun_mulai', 'desc')->get();
         $activePeriod = Period::where('is_active', true)->first();
 
@@ -157,30 +168,33 @@ class ProposalController extends Controller
             'deskripsi'       => 'required|string',
             'tanggal_mulai'   => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-            'tipe_lokasi'     => 'required|in:internal,eksternal',
             'tempat'          => 'required|string|max:255',
-            'anggaran'        => 'required|numeric|min:0',
             'file_proposal'   => 'nullable|file|mimes:pdf|max:5120',
+            
+            // DIUBAH: tipe_lokasi & anggaran sekarang nullable (boleh kosong)
+            'tipe_lokasi'     => 'nullable|in:internal,eksternal',
+            'anggaran'        => 'nullable|numeric|min:0',
 
-            'konsumsi_items'       => 'nullable|array',
+            // Validasi Kuantitas items diubah menjadi min:0 atau nullable
+            'konsumsi_items'         => 'nullable|array',
             'konsumsi_items.*.nama'  => 'nullable|string|max:255',
-            'konsumsi_items.*.jumlah'=> 'nullable|integer|min:0',
+            'konsumsi_items.*.jumlah'=> 'nullable|integer|min:0', 
             'konsumsi_items.*.harga' => 'nullable|numeric|min:0',
 
-            'atk_items'            => 'nullable|array',
-            'atk_items.*.nama'     => 'nullable|string|max:255',
-            'atk_items.*.jumlah'   => 'nullable|integer|min:0',
-            'atk_items.*.harga'    => 'nullable|numeric|min:0',
+            'atk_items'              => 'nullable|array',
+            'atk_items.*.nama'       => 'nullable|string|max:255',
+            'atk_items.*.jumlah'     => 'nullable|integer|min:0',
+            'atk_items.*.harga'      => 'nullable|numeric|min:0',
 
-            'honor_items'          => 'nullable|array',
-            'honor_items.*.nama'   => 'nullable|string|max:255',
-            'honor_items.*.jumlah' => 'nullable|integer|min:0',
-            'honor_items.*.harga'  => 'nullable|numeric|min:0',
+            'honor_items'            => 'nullable|array',
+            'honor_items.*.nama'     => 'nullable|string|max:255',
+            'honor_items.*.jumlah'   => 'nullable|integer|min:0',
+            'honor_items.*.harga'    => 'nullable|numeric|min:0',
 
-            'sewa_items'           => 'nullable|array',
-            'sewa_items.*.nama'    => 'nullable|string|max:255',
-            'sewa_items.*.jumlah'  => 'nullable|integer|min:0',
-            'sewa_items.*.harga'   => 'nullable|numeric|min:0',
+            'sewa_items'             => 'nullable|array',
+            'sewa_items.*.nama'      => 'nullable|string|max:255',
+            'sewa_items.*.jumlah'    => 'nullable|integer|min:0',
+            'sewa_items.*.harga'     => 'nullable|numeric|min:0',
 
             'dokumentasi_items'          => 'nullable|array',
             'dokumentasi_items.*.nama'   => 'nullable|string|max:255',
@@ -192,10 +206,11 @@ class ProposalController extends Controller
             'transportasi_items.*.jumlah' => 'nullable|integer|min:0',
             'transportasi_items.*.harga'  => 'nullable|numeric|min:0',
 
-            'kebersihan_keterangan' => 'nullable|string',
-            'kebersihan_biaya'      => 'nullable|numeric|min:0',
+            'kebersihan_keterangan'  => 'nullable|string',
+            'kebersihan_biaya'       => 'nullable|numeric|min:0',
         ]);
 
+        // Handle file upload
         $filePath = $proposal->file_proposal;
         if ($request->hasFile('file_proposal')) {
             if ($proposal->file_proposal) {
@@ -213,15 +228,15 @@ class ProposalController extends Controller
                 'deskripsi'       => $validated['deskripsi'],
                 'tanggal_mulai'   => $validated['tanggal_mulai'],
                 'tanggal_selesai' => $validated['tanggal_selesai'],
-                'tipe_lokasi'     => $validated['tipe_lokasi'],
                 'tempat'          => $validated['tempat'],
-                'anggaran'        => $validated['anggaran'],
                 'file_proposal'   => $filePath,
+                'tipe_lokasi'     => $validated['tipe_lokasi'] ?? null,
+                'anggaran'        => $validated['anggaran'] ?? 0, // Fallback ke 0 jika kosong
                 'kebersihan_keterangan' => $validated['kebersihan_keterangan'] ?? null,
                 'kebersihan_biaya'      => $validated['kebersihan_biaya'] ?? 0,
             ]);
 
-            // Sync Pattern
+            // Hapus semua item anggaran lama lalu insert ulang (Sync Pattern)
             $proposal->items()->delete();
             $this->syncItems($proposal, $request);
         });

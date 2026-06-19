@@ -44,11 +44,11 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
                                         <p class="text-sm font-medium text-gray-500">Tanggal Mulai</p>
-                                        <p class="text-gray-900">{{ $proposal->tanggal_mulai->format('d F Y') }}</p>
+                                        <p class="text-gray-900">{{ \Carbon\Carbon::parse($proposal->tanggal_mulai)->format('d F Y') }}</p>
                                     </div>
                                     <div>
                                         <p class="text-sm font-medium text-gray-500">Tanggal Selesai</p>
-                                        <p class="text-gray-900">{{ $proposal->tanggal_selesai->format('d F Y') }}</p>
+                                        <p class="text-gray-900">{{ \Carbon\Carbon::parse($proposal->tanggal_selesai)->format('d F Y') }}</p>
                                     </div>
                                 </div>
 
@@ -58,9 +58,13 @@
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                                         Internal Kampus
                                     </span>
-                                    @else
+                                    @elseif($proposal->tipe_lokasi === 'eksternal')
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
                                         Eksternal Kampus
+                                    </span>
+                                    @else
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                        Belum Ditentukan
                                     </span>
                                     @endif
                                 </div>
@@ -72,7 +76,7 @@
 
                                 <div>
                                     <p class="text-sm font-medium text-gray-500">Organisasi</p>
-                                    <p class="text-gray-900">{{ $proposal->user->ormawa_name }}</p>
+                                    <p class="text-gray-900">{{ $proposal->user->ormawa_name ?? 'Ormawa' }}</p>
                                 </div>
 
                                 <div>
@@ -97,29 +101,45 @@
                             <h3 class="text-lg font-semibold mb-4 pb-2 border-b">Detail Anggaran</h3>
 
                             <div class="space-y-6">
+                                @php
+                                    // Kelompokkan item anggaran dinamis yang kuantitasnya > 0 dan nama tidak kosong
+                                    $filteredItems = $proposal->items->filter(function($item) {
+                                        return !empty($item->nama) && $item->jumlah > 0;
+                                    })->groupBy('tipe');
 
-                                {{-- 1. INTERNAL ITEMS (dari tabel proposal_items tipe='internal') --}}
-                                @if($proposal->internalItems->isNotEmpty())
+                                    // Mapping label judul untuk mempercantik tampilan tabel kategori
+                                    $labels = [
+                                        'konsumsi'     => '1. Konsumsi (Makanan, Snack, Minuman)',
+                                        'atk'          => '2. Barang Habis Pakai & ATK',
+                                        'honor'        => '3. Honor dan Jasa (MC, Pemateri, dll)',
+                                        'sewa'         => '4. Penyewaan Alat / Aula',
+                                        'dokumentasi'  => '5. Dokumentasi & Penggandaan Kegiatan',
+                                        'transportasi' => '5. Biaya Transportasi & Operasional',
+                                    ];
+                                @endphp
+
+                                {{-- Loop hanya kategori yang terbukti memiliki data valid di database --}}
+                                @forelse($filteredItems as $tipe => $items)
                                 <div>
-                                    <p class="text-sm font-medium text-gray-500 mb-2">
-                                        Internal: Anggaran Perlengkapan &amp; Kegiatan
+                                    <p class="text-sm font-semibold text-blue-800 mb-2">
+                                        {{ $labels[$tipe] ?? text_transform(str_replace('_', ' ', $tipe)) }}
                                     </p>
                                     <div class="overflow-x-auto border rounded-lg">
                                         <table class="w-full text-sm">
                                             <thead class="bg-gray-50 text-xs uppercase text-gray-500">
                                                 <tr>
-                                                    <th class="px-4 py-3 text-left">Nama Barang / Item</th>
-                                                    <th class="px-4 py-3 text-center w-20">Jumlah</th>
-                                                    <th class="px-4 py-3 text-right w-36">Harga/Satuan</th>
+                                                    <th class="px-4 py-3 text-left">Nama Spesifikasi / Item</th>
+                                                    <th class="px-4 py-3 text-center w-24">Kuantitas</th>
+                                                    <th class="px-4 py-3 text-right w-36">Harga Satuan</th>
                                                     <th class="px-4 py-3 text-right w-36">Subtotal</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                @foreach($proposal->internalItems as $item)
-                                                <tr class="border-t hover:bg-gray-50">
-                                                    <td class="px-4 py-3 text-gray-700">{{ $item->nama ?? '-' }}</td>
-                                                    <td class="px-4 py-3 text-center text-gray-700">{{ $item->jumlah }}</td>
-                                                    <td class="px-4 py-3 text-right text-gray-700">
+                                            <tbody class="divide-y divide-gray-200">
+                                                @foreach($items as $item)
+                                                <tr class="hover:bg-gray-50/80 transition-colors">
+                                                    <td class="px-4 py-3 text-gray-700 font-medium">{{ $item->nama }}</td>
+                                                    <td class="px-4 py-3 text-center text-gray-600">{{ $item->jumlah }}</td>
+                                                    <td class="px-4 py-3 text-right text-gray-600">
                                                         Rp {{ number_format($item->harga, 0, ',', '.') }}
                                                     </td>
                                                     <td class="px-4 py-3 text-right font-semibold text-gray-800">
@@ -128,122 +148,44 @@
                                                 </tr>
                                                 @endforeach
                                             </tbody>
-                                            <tfoot>
-                                                <tr class="border-t bg-gray-50">
-                                                    <td colspan="3" class="px-4 py-2 text-right text-xs font-medium text-gray-500">
-                                                        Subtotal Internal
+                                            <tfoot class="bg-gray-50/50">
+                                                <tr class="border-t font-semibold">
+                                                    <td colspan="3" class="px-4 py-2.5 text-right text-xs text-gray-500">
+                                                        Subtotal Kategori
                                                     </td>
-                                                    <td class="px-4 py-2 text-right font-bold text-gray-700">
-                                                        Rp {{ number_format($proposal->internalItems->sum('subtotal'), 0, ',', '.') }}
+                                                    <td class="px-4 py-2.5 text-right text-gray-900 bg-gray-50">
+                                                        Rp {{ number_format($items->sum('subtotal'), 0, ',', '.') }}
                                                     </td>
                                                 </tr>
                                             </tfoot>
                                         </table>
                                     </div>
                                 </div>
-                                @endif
-
-                                {{-- 2. EXTERNAL ITEMS / Jasa (dari tabel proposal_items tipe='external') --}}
-                                @if($proposal->externalItems->isNotEmpty())
-                                <div>
-                                    <p class="text-sm font-medium text-gray-500 mb-2">
-                                        Eksternal: Jasa / Layanan (MC, Catering, dll)
+                                @empty
+                                    {{-- KONDISI JIKA TIDAK ADA ITEM DENGAN JUMLAH > 0 SAMA SEKALI --}}
+                                    @if(!($proposal->kebersihan_biaya > 0))
+                                    <p class="text-sm text-gray-400 italic text-center py-6">
+                                        Belum ada rincian item anggaran yang dimasukkan.
                                     </p>
-                                    <div class="overflow-x-auto border rounded-lg">
-                                        <table class="w-full text-sm">
-                                            <thead class="bg-gray-50 text-xs uppercase text-gray-500">
-                                                <tr>
-                                                    <th class="px-4 py-3 text-left">Jasa / Layanan</th>
-                                                    <th class="px-4 py-3 text-center w-20">Jumlah</th>
-                                                    <th class="px-4 py-3 text-right w-36">Harga/Satuan</th>
-                                                    <th class="px-4 py-3 text-right w-36">Subtotal</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($proposal->externalItems as $item)
-                                                <tr class="border-t hover:bg-gray-50">
-                                                    <td class="px-4 py-3 text-gray-700">{{ $item->jasa ?? '-' }}</td>
-                                                    <td class="px-4 py-3 text-center text-gray-700">{{ $item->jumlah }}</td>
-                                                    <td class="px-4 py-3 text-right text-gray-700">
-                                                        Rp {{ number_format($item->harga, 0, ',', '.') }}
-                                                    </td>
-                                                    <td class="px-4 py-3 text-right font-semibold text-gray-800">
-                                                        Rp {{ number_format($item->subtotal, 0, ',', '.') }}
-                                                    </td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                            <tfoot>
-                                                <tr class="border-t bg-gray-50">
-                                                    <td colspan="3" class="px-4 py-2 text-right text-xs font-medium text-gray-500">
-                                                        Subtotal Jasa
-                                                    </td>
-                                                    <td class="px-4 py-2 text-right font-bold text-gray-700">
-                                                        Rp {{ number_format($proposal->externalItems->sum('subtotal'), 0, ',', '.') }}
-                                                    </td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
+                                    @endif
+                                @endforelse
+
+                                {{-- ── Tampilkan Biaya Kebersihan secara Mandiri jika > 0 ── --}}
+                                @if($proposal->kebersihan_biaya > 0)
+                                <div class="p-4 bg-gray-50 border rounded-lg">
+                                    <p class="text-sm font-semibold text-gray-800 mb-1">6. Kebersihan Tempat Kegiatan</p>
+                                    <p class="text-xs text-gray-500 mb-2">Keterangan: {{ $proposal->kebersihan_keterangan ?? 'Sewa petugas kebersihan' }}</p>
+                                    <div class="flex justify-between text-sm font-medium pt-2 border-t border-gray-200">
+                                        <span class="text-gray-600">Biaya Kebersihan</span>
+                                        <span class="text-gray-900 font-bold">Rp {{ number_format($proposal->kebersihan_biaya, 0, ',', '.') }}</span>
                                     </div>
                                 </div>
                                 @endif
 
-                                {{-- 3. BARANG ITEMS (dari tabel proposal_items tipe='barang') --}}
-                                @if($proposal->barangItems->isNotEmpty())
-                                <div>
-                                    <p class="text-sm font-medium text-gray-500 mb-2">
-                                        Barang: ATK / Perlengkapan
-                                    </p>
-                                    <div class="overflow-x-auto border rounded-lg">
-                                        <table class="w-full text-sm">
-                                            <thead class="bg-gray-50 text-xs uppercase text-gray-500">
-                                                <tr>
-                                                    <th class="px-4 py-3 text-left">Nama Barang</th>
-                                                    <th class="px-4 py-3 text-center w-20">Jumlah</th>
-                                                    <th class="px-4 py-3 text-right w-36">Harga/Satuan</th>
-                                                    <th class="px-4 py-3 text-right w-36">Subtotal</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach($proposal->barangItems as $item)
-                                                <tr class="border-t hover:bg-gray-50">
-                                                    <td class="px-4 py-3 text-gray-700">{{ $item->nama ?? '-' }}</td>
-                                                    <td class="px-4 py-3 text-center text-gray-700">{{ $item->jumlah }}</td>
-                                                    <td class="px-4 py-3 text-right text-gray-700">
-                                                        Rp {{ number_format($item->harga, 0, ',', '.') }}
-                                                    </td>
-                                                    <td class="px-4 py-3 text-right font-semibold text-gray-800">
-                                                        Rp {{ number_format($item->subtotal, 0, ',', '.') }}
-                                                    </td>
-                                                </tr>
-                                                @endforeach
-                                            </tbody>
-                                            <tfoot>
-                                                <tr class="border-t bg-gray-50">
-                                                    <td colspan="3" class="px-4 py-2 text-right text-xs font-medium text-gray-500">
-                                                        Subtotal Barang
-                                                    </td>
-                                                    <td class="px-4 py-2 text-right font-bold text-gray-700">
-                                                        Rp {{ number_format($proposal->barangItems->sum('subtotal'), 0, ',', '.') }}
-                                                    </td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-                                </div>
-                                @endif
-
-                                {{-- Fallback jika belum ada item --}}
-                                @if($proposal->internalItems->isEmpty() && $proposal->externalItems->isEmpty() && $proposal->barangItems->isEmpty())
-                                <p class="text-sm text-gray-400 italic text-center py-4">
-                                    Belum ada rincian item anggaran.
-                                </p>
-                                @endif
-
-                                {{-- TOTAL ANGGARAN --}}
+                                {{-- TOTAL AKHIR ANGGARAN --}}
                                 <div class="pt-4 border-t-2 border-gray-200">
                                     <div class="flex justify-between items-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-                                        <span class="text-sm font-semibold text-blue-900">Total Anggaran</span>
+                                        <span class="text-sm font-semibold text-blue-900">Total Anggaran Keseluruhan</span>
                                         <span class="text-2xl font-bold text-blue-900">
                                             Rp {{ number_format($proposal->anggaran ?? 0, 0, ',', '.') }}
                                         </span>
@@ -306,7 +248,6 @@
                             <h3 class="text-lg font-semibold mb-6">Status Proposal</h3>
 
                             <div class="space-y-4">
-                                {{-- Step 1: Diajukan (selalu hijau) --}}
                                 <div class="flex items-start gap-3">
                                     <div class="flex-shrink-0 pt-0.5">
                                         <div class="h-6 w-6 rounded-full bg-green-500 flex items-center justify-center">
@@ -317,11 +258,10 @@
                                     </div>
                                     <div>
                                         <p class="text-sm font-semibold text-gray-900">Proposal Diajukan</p>
-                                        <p class="text-xs text-gray-500">{{ $proposal->created_at->format('d M Y H:i') }}</p>
+                                        <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($proposal->created_at)->format('d M Y H:i') }}</p>
                                     </div>
                                 </div>
 
-                                {{-- Step 2: Persetujuan BEM --}}
                                 <div class="flex items-start gap-3">
                                     <div class="flex-shrink-0 pt-0.5">
                                         @if(in_array($proposal->status, ['approved_bem', 'approved_admin']))
@@ -351,7 +291,6 @@
                                     </div>
                                 </div>
 
-                                {{-- Step 3: Persetujuan Admin --}}
                                 <div class="flex items-start gap-3">
                                     <div class="flex-shrink-0 pt-0.5">
                                         @if($proposal->status === 'approved_admin')
