@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Proposal extends Model
 {
@@ -13,17 +14,15 @@ class Proposal extends Model
         'tanggal_mulai', 'tanggal_selesai', 'tipe_lokasi', 'tempat',
         'barang_diperlukan', 'sewa_tempat', 'jasa', 'bahan',
         'anggaran', 'file_proposal', 'status', 'catatan_bem', 'catatan_admin',
-        'internal_items', 'external_items', 'barang_items'
     ];
 
     protected $casts = [
-        'tanggal_mulai' => 'date',
-        'tanggal_selesai' => 'date',
-        'anggaran' => 'decimal:2',
-        'internal_items' => 'array',
-        'external_items' => 'array',
-        'barang_items' => 'array'
+        'tanggal_mulai'  => 'date',
+        'tanggal_selesai'=> 'date',
+        'anggaran'       => 'decimal:2',
     ];
+
+    // ── Relasi ──────────────────────────────────────────────────────────────
 
     public function user(): BelongsTo
     {
@@ -40,10 +39,33 @@ class Proposal extends Model
         return $this->hasOne(Activity::class);
     }
 
+    public function items(): HasMany
+    {
+        return $this->hasMany(ProposalItem::class)->orderBy('urutan');
+    }
+
+    public function internalItems(): HasMany
+    {
+        return $this->hasMany(ProposalItem::class)->where('tipe', 'internal')->orderBy('urutan');
+    }
+
+    public function externalItems(): HasMany
+    {
+        return $this->hasMany(ProposalItem::class)->where('tipe', 'external')->orderBy('urutan');
+    }
+
+    public function barangItems(): HasMany
+    {
+        return $this->hasMany(ProposalItem::class)->where('tipe', 'barang')->orderBy('urutan');
+    }
+
+    // ── Helper ──────────────────────────────────────────────────────────────
+
     public static function generateKodeProposal(): string
     {
-        $year = date('Y');
+        $year  = date('Y');
         $month = date('m');
+
         $latest = self::whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
             ->latest()
