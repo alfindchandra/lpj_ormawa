@@ -14,7 +14,7 @@
 
     <div class="py-6 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="px-6 py-5 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+            <div class="px-6 py-5 bg-blue-600 text-white">
                 <h3 class="font-semibold text-lg">Data Kepengurusan Inti</h3>
                 <p class="text-blue-100 text-sm mt-1">Isi data lengkap pengurus inti sesuai masa jabatan kabinet</p>
             </div>

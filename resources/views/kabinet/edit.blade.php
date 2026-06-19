@@ -14,7 +14,7 @@
 
     <div class="py-6 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="px-6 py-5 bg-gradient-to-r from-amber-500 to-amber-600 text-white">
+            <div class="px-6 py-5 bg-teal-600 text-white">
                 <h3 class="font-semibold text-lg">Perbarui Data Kepengurusan</h3>
                 <p class="text-amber-100 text-sm mt-1">{{ $kabinet->ormawa_name }} • {{ $kabinet->period->nama_periode ?? '-' }}</p>
             </div>
