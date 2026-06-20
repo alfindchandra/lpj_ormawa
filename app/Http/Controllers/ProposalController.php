@@ -109,7 +109,7 @@ class ProposalController extends Controller
                 'file_proposal'   => $filePath,
                 'status'          => 'pending',
                 'tipe_lokasi'     => $validated['tipe_lokasi'] ?? null,
-                'anggaran'        => $validated['anggaran'] ?? 0, // Fallback ke 0 jika tidak diisi
+                'anggaran'        => $validated['anggaran'] ?? 0,
                 'kebersihan_keterangan' => $validated['kebersihan_keterangan'] ?? null,
                 'kebersihan_biaya'      => $validated['kebersihan_biaya'] ?? 0,
             ]);

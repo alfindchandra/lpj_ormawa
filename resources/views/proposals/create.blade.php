@@ -178,7 +178,7 @@
                             </div>
                             @error('anggaran')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
-
+  
                         {{-- ── File Proposal ───────────────────────────────────────────── --}}
                         <div class="mb-6">
                             <label for="file_proposal" class="block text-sm font-medium text-gray-700 mb-2">
