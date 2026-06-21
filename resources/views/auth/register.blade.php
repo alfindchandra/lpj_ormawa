@@ -56,8 +56,11 @@
                 </div>
             </div>
 
-            
 
+            <div class="flex justify-between items-center mt-6">
+                <button type="button" onclick="window.location='{{ route('dashboard') }}'" class="inline-flex justify-center items-center px-8 py-3 bg-gray-200 border border-transparent rounded-xl font-semibold text-sm text-gray-700 tracking-wide hover:bg-gray-300 active:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 shadow-sm transition duration-150 ease-in-out">
+                    {{ __('Batal') }}
+                </button>
                 <button type="submit" class="w-full md:w-auto inline-flex justify-center items-center px-8 py-3.5 bg-indigo-600 border border-transparent rounded-xl font-bold text-sm text-white tracking-wide hover:bg-indigo-700 active:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg shadow-indigo-200 transition duration-150 ease-in-out transform hover:-translate-y-0.5">
                     {{ __('Daftar Sekarang') }}
                 </button>

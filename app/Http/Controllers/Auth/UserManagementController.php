@@ -23,12 +23,14 @@ class UserManagementController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'ormawa_name' => ['required', 'string', 'max:255'],
             'role' => ['required', 'string'],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->ormawa_name = $request->ormawa_name;
         $user->role = $request->role;
 
         // Jika form password diisi, lakukan pembaruan password
