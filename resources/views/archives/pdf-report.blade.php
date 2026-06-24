@@ -277,33 +277,20 @@
         @endif
 
         <!-- Signature -->
-        <div class="signature-section">
-            <table class="signature-table">
-                <tr>
-                    <td>
-                        <div>Mengetahui,</div>
-                        <div class="sig-role">Ketua Bidang Kemahasiswaan</div>
-                        <span class="sig-space"></span>
-                        <div class="sig-name">(________________________)</div>
-                        <div class="sig-nip">NIP. ____________________</div>
-                    </td>
-                    <td>
-                        <div>Mengetahui,</div>
-                        <div class="sig-role">Bendahara Bidang Kemahasiswaan</div>
-                        <span class="sig-space"></span>
-                        <div class="sig-name">(________________________)</div>
-                        <div class="sig-nip">NIP. ____________________</div>
-                    </td>
-                    <td>
-                        <div>Mengetahui,</div>
-                        <div class="sig-role">Wakil Rektor Bidang Akademik</div>
-                        <span class="sig-space"></span>
-                        <div class="sig-name">(________________________)</div>
-                        <div class="sig-nip">NIP. ____________________</div>
-                    </td>
-                </tr>
-            </table>
-        </div>
+        <!-- Bagian Tanda Tangan PDF -->
+<table style="width: 100%; margin-top: 50px; border-collapse: collapse;">
+    <tr>
+        <td style="width: 50%;"></td> <!-- Sisi kiri dikosongkan jika ingin di kanan, atau sesuaikan layout -->
+        <td style="width: 50%; text-align: center;">
+            <p>Mengetahui,</p>
+            <p style="margin-bottom: 80px;">Wakil Rektor Bidang Akademik dan Kemahasiswaan</p>
+            
+            <!-- Nama Pejabat -->
+            <p style="font-weight: bold; text-decoration: underline;">______________________</p>
+           
+        </td>
+    </tr>
+</table>
 
      
 

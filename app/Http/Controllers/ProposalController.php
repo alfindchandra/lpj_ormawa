@@ -54,6 +54,7 @@ class ProposalController extends Controller
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'tempat'          => 'required|string|max:255',
             'file_proposal'   => 'required|file|mimes:pdf|max:5120',
+            'type'            => 'required|in:dana,non_dana',
             
             // SEKARANG DIAKUI NULLABLE (BISA KOSONG)
             'tipe_lokasi'     => 'nullable|in:internal,eksternal',
@@ -170,6 +171,7 @@ class ProposalController extends Controller
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'tempat'          => 'required|string|max:255',
             'file_proposal'   => 'nullable|file|mimes:pdf|max:5120',
+            'type'            => 'required|in:dana,non_dana',
             
             // DIUBAH: tipe_lokasi & anggaran sekarang nullable (boleh kosong)
             'tipe_lokasi'     => 'nullable|in:internal,eksternal',
@@ -229,6 +231,7 @@ class ProposalController extends Controller
                 'tanggal_mulai'   => $validated['tanggal_mulai'],
                 'tanggal_selesai' => $validated['tanggal_selesai'],
                 'tempat'          => $validated['tempat'],
+                'type'            => $validated['type'],
                 'file_proposal'   => $filePath,
                 'tipe_lokasi'     => $validated['tipe_lokasi'] ?? null,
                 'anggaran'        => $validated['anggaran'] ?? 0, // Fallback ke 0 jika kosong

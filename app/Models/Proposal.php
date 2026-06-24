@@ -12,7 +12,7 @@ class Proposal extends Model
     protected $fillable = [
         'user_id', 'period_id', 'kode_proposal', 'nama_kegiatan', 'deskripsi',
         'tanggal_mulai', 'tanggal_selesai', 'tipe_lokasi', 'tempat',
-        'anggaran', 'file_proposal', 'status', 'catatan_bem', 'catatan_admin',
+        'anggaran', 'file_proposal', 'status','type', 'catatan_bem', 'catatan_admin',
         
         // Tambahkan ini agar data kebersihan tersimpan aman
         'kebersihan_keterangan', 'kebersihan_biaya', 

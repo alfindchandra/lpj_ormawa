@@ -91,14 +91,14 @@
                             </div>
                         </div>
 
-                        {{-- ── Tipe Lokasi (Opsional) ─────────────────────────────────── --}}
+                        {{-- ── Tipe Lokasi ─────────────────────────────────────────────── --}}
                         <div class="mb-6">
                             <label for="tipe_lokasi" class="block text-sm font-medium text-gray-700 mb-2">
-                                Tipe Lokasi <span class="text-xs text-gray-400">(Opsional)</span>
+                                Tipe Lokasi <span class="text-red-500">*</span>
                             </label>
-                            <select name="tipe_lokasi" id="tipe_lokasi"
+                            <select name="tipe_lokasi" id="tipe_lokasi" required
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                <option value="">-- Pilih Tipe Lokasi (Boleh Kosong) --</option>
+                                <option value="">-- Pilih Tipe Lokasi --</option>
                                 <option value="internal"  {{ old('tipe_lokasi', $proposal->tipe_lokasi) == 'internal'  ? 'selected' : '' }}>Internal Kampus</option>
                                 <option value="eksternal" {{ old('tipe_lokasi', $proposal->tipe_lokasi) == 'eksternal' ? 'selected' : '' }}>Eksternal Kampus</option>
                             </select>
@@ -116,81 +116,96 @@
                             @error('tempat')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
 
+                        {{-- ── Kategori Pendanaan (TAMBAHAN BARU) ────────────────────────── --}}
+                        <div class="mb-6">
+                            <label for="type" class="block text-sm font-medium text-gray-700 mb-2">
+                                Jenis Proposal <span class="text-red-500">*</span>
+                            </label>
+                            <select name="type" id="type" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <option value="dana" {{ old('type', $proposal->type ?? 'dana') == 'dana' ? 'selected' : '' }}>Dana (Mengajukan Anggaran)</option>
+                                <option value="non_dana" {{ old('type', $proposal->type) == 'non_dana' ? 'selected' : '' }}>Non Dana (Tanpa Anggaran)</option>
+                            </select>
+                        </div>
+
+
                         {{-- ══════════════════════════════════════════════════════════════
-                             SECTION RINCIAN ANGGARAN DINAMIS (EDIT PATTERN)
+                             SECTION RINCIAN ANGGARAN DINAMIS (Bungkus Utama)
                         ══════════════════════════════════════════════════════════════ --}}
-                        <div id="section-anggaran">
-                            <div class="mb-2 pb-2 border-b-2 border-blue-200">
-                                <h3 class="text-base font-bold text-blue-800">Rincian Anggaran</h3>
-                            </div>
+                        <div id="wrapper-rincian-anggaran" class="hidden">
+                            <div id="section-anggaran">
+                                <div class="mb-2 pb-2 border-b-2 border-blue-200">
+                                    <h3 class="text-base font-bold text-blue-800">Rincian Anggaran</h3>
+                                </div>
 
-                            @php 
-                                $blankRow = [['nama' => '', 'jumlah' => '', 'harga' => '']]; 
-                            @endphp
+                                @php 
+                                    $blankRow = [['nama' => '', 'jumlah' => '', 'harga' => '']]; 
+                                @endphp
 
-                            <div class="mt-5">
-                                <x-budget-category-table title="1. Konsumsi" subtitle="Makanan, snack, air minum, dll" section="konsumsi" 
-                                    :items="old('konsumsi_items', $proposal->konsumsiItems->isNotEmpty() ? $proposal->konsumsiItems->toArray() : $blankRow)" placeholder="Contoh: Nasi kotak" />
-                            </div>
+                                <div class="mt-5">
+                                    <x-budget-category-table title="1. Konsumsi" subtitle="Makanan, snack, air minum, dll" section="konsumsi" 
+                                        :items="old('konsumsi_items', $proposal->konsumsiItems->isNotEmpty() ? $proposal->konsumsiItems->toArray() : $blankRow)" placeholder="Contoh: Nasi kotak" />
+                                </div>
 
-                            <div class="mt-5">
-                                <x-budget-category-table title="2. Barang Habis Pakai & ATK" subtitle="Pulpen, banner, kertas, dll" section="atk" 
-                                    :items="old('atk_items', $proposal->atkItems->isNotEmpty() ? $proposal->atkItems->toArray() : $blankRow)" placeholder="Contoh: Banner" />
-                            </div>
+                                <div class="mt-5">
+                                    <x-budget-category-table title="2. Barang Habis Pakai & ATK" subtitle="Pulpen, banner, kertas, dll" section="atk" 
+                                        :items="old('atk_items', $proposal->atkItems->isNotEmpty() ? $proposal->atkItems->toArray() : $blankRow)" placeholder="Contoh: Banner" />
+                                </div>
 
-                            <div class="mt-5">
-                                <x-budget-category-table title="3. Honor dan Jasa" subtitle="MC, pemateri — satuan: orang" section="honor" 
-                                    :items="old('honor_items', $proposal->honorItems->isNotEmpty() ? $proposal->honorItems->toArray() : $blankRow)" placeholder="Contoh: MC" unit-label="orang" />
-                            </div>
+                                <div class="mt-5">
+                                    <x-budget-category-table title="3. Honor dan Jasa" subtitle="MC, pemateri — satuan: orang" section="honor" 
+                                        :items="old('honor_items', $proposal->honorItems->isNotEmpty() ? $proposal->honorItems->toArray() : $blankRow)" placeholder="Contoh: MC" unit-label="orang" />
+                                </div>
 
-                            <div class="mt-5">
-                                <x-budget-category-table title="4. Penyewaan" subtitle="Tempat, alat, kamera, dll" section="sewa" 
-                                    :items="old('sewa_items', $proposal->sewaItems->isNotEmpty() ? $proposal->sewaItems->toArray() : $blankRow)" placeholder="Contoh: Sewa aula" />
-                            </div>
+                                <div class="mt-5">
+                                    <x-budget-category-table title="4. Penyewaan" subtitle="Tempat, alat, kamera, dll" section="sewa" 
+                                        :items="old('sewa_items', $proposal->sewaItems->isNotEmpty() ? $proposal->sewaItems->toArray() : $blankRow)" placeholder="Contoh: Sewa aula" />
+                                </div>
 
-                            <div id="cat-dokumentasi" class="mt-5 hidden">
-                                <x-budget-category-table title="5. Dokumentasi Kegiatan" subtitle="Print, fotocopy, undangan, dll" section="dokumentasi" 
-                                    :items="old('dokumentasi_items', $proposal->dokumentasiItems->isNotEmpty() ? $proposal->dokumentasiItems->toArray() : $blankRow)" placeholder="Contoh: Print proposal" />
-                            </div>
+                                <div id="cat-dokumentasi" class="mt-5 hidden">
+                                    <x-budget-category-table title="5. Dokumentasi Kegiatan" subtitle="Print, fotocopy, undangan, dll" section="dokumentasi" 
+                                        :items="old('dokumentasi_items', $proposal->dokumentasiItems->isNotEmpty() ? $proposal->dokumentasiItems->toArray() : $blankRow)" placeholder="Contoh: Print proposal" />
+                                </div>
 
-                            <div id="cat-transportasi" class="mt-5 hidden">
-                                <x-budget-category-table title="5. Transportasi" subtitle="Biaya transportasi panitia / peserta" section="transportasi" 
-                                    :items="old('transportasi_items', $proposal->transportasiItems->isNotEmpty() ? $proposal->transportasiItems->toArray() : $blankRow)" placeholder="Contoh: Bensin" />
-                            </div>
+                                <div id="cat-transportasi" class="mt-5 hidden">
+                                    <x-budget-category-table title="5. Transportasi" subtitle="Biaya transportasi panitia / peserta" section="transportasi" 
+                                        :items="old('transportasi_items', $proposal->transportasiItems->isNotEmpty() ? $proposal->transportasiItems->toArray() : $blankRow)" placeholder="Contoh: Bensin" />
+                                </div>
 
-                            <div id="cat-kebersihan" class="mt-5 hidden">
-                                <div class="rounded-lg border border-gray-200 overflow-hidden bg-white">
-                                    <div class="flex items-center justify-between bg-gray-50 px-4 py-3 border-b border-gray-200">
-                                        <span class="text-sm font-semibold text-gray-800">6. Kebersihan</span>
-                                    </div>
-                                    <div class="p-4">
-                                        <textarea name="kebersihan_keterangan" rows="2" class="w-full rounded-md border-gray-300 text-sm" placeholder="Rincian kebersihan">{{ old('kebersihan_keterangan', $proposal->kebersihan_keterangan) }}</textarea>
-                                        <div class="mt-2 flex items-center gap-3">
-                                            <label class="text-xs font-medium text-gray-600">Biaya Kebersihan (Rp)</label>
-                                            <input type="number" name="kebersihan_biaya" id="kebersihan_biaya" class="flex-1 rounded-md border-gray-300 text-sm" min="0" placeholder="0" 
-                                                value="{{ old('kebersihan_biaya', $proposal->kebersihan_biaya ? round($proposal->kebersihan_biaya) : '') }}" oninput="updateTotalAnggaran()">
+                                <div id="cat-kebersihan" class="mt-5 hidden">
+                                    <div class="rounded-lg border border-gray-200 overflow-hidden bg-white">
+                                        <div class="flex items-center justify-between bg-gray-50 px-4 py-3 border-b border-gray-200">
+                                            <span class="text-sm font-semibold text-gray-800">6. Kebersihan</span>
+                                        </div>
+                                        <div class="p-4">
+                                            <textarea name="kebersihan_keterangan" rows="2" class="w-full rounded-md border-gray-300 text-sm" placeholder="Rincian kebersihan">{{ old('kebersihan_keterangan', $proposal->kebersihan_keterangan) }}</textarea>
+                                            <div class="mt-2 flex items-center gap-3">
+                                                <label class="text-xs font-medium text-gray-600">Biaya Kebersihan (Rp)</label>
+                                                <input type="number" name="kebersihan_biaya" id="kebersihan_biaya" class="flex-1 rounded-md border-gray-300 text-sm" min="0" placeholder="0" 
+                                                    value="{{ old('kebersihan_biaya', $proposal->kebersihan_biaya ? round($proposal->kebersihan_biaya) : '') }}" oninput="updateTotalAnggaran()">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {{-- ── Total Anggaran ──────────────────────────────────────────── --}}
-                        <div class="mt-6 mb-6">
-                            <label for="anggaran" class="block text-sm font-medium text-gray-700 mb-2">
-                                Total Anggaran (Rp) <span class="text-xs text-gray-400">(Opsional/Otomatis)</span>
-                            </label>
-                            <div class="relative">
-                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 text-sm">Rp</span>
-                                <input type="number" name="anggaran" id="anggaran" step="1" min="0"
-                                    class="mt-1 block w-full pl-10 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 font-semibold"
-                                    value="{{ old('anggaran', $proposal->anggaran ? round($proposal->anggaran) : '') }}">
+                            {{-- ── Total Anggaran ──────────────────────────────────────────── --}}
+                            <div class="mt-6 mb-6">
+                                <label for="anggaran" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Total Anggaran (Rp) <span class="text-xs text-gray-400">(Otomatis)</span>
+                                </label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 text-sm">Rp</span>
+                                    <input type="number" name="anggaran" id="anggaran" step="1" min="0" readonly
+                                        class="mt-1 block w-full pl-10 rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-blue-500 focus:ring-blue-500 font-semibold"
+                                        value="{{ old('anggaran', $proposal->anggaran ? round($proposal->anggaran) : '') }}">
+                                </div>
+                                @error('anggaran')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                             </div>
-                            @error('anggaran')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
 
                         {{-- ── File Proposal ───────────────────────────────────────────── --}}
-                        <div class="mb-6">
+                        <div class="mb-6 mt-6">
                             <label for="file_proposal" class="block text-sm font-medium text-gray-700 mb-2">
                                 File Proposal (PDF, Max 5MB)
                             </label>
@@ -226,27 +241,31 @@
     </div>
 
 <script>
-const ALL_SECTIONS = ['konsumsi','atk','honor','sewa','dokumentasi','transportasi'];
-
 function onLokasiChange() {
-    const tipe = document.getElementById('tipe_lokasi').value;
+    const kategoriDana = document.getElementById('type').value;
+    const tipeLokasi = document.getElementById('tipe_lokasi').value;
+    
+    const wrapperAnggaran = document.getElementById('wrapper-rincian-anggaran');
     const catDokumentasi  = document.getElementById('cat-dokumentasi');
     const catTransportasi = document.getElementById('cat-transportasi');
     const catKebersihan   = document.getElementById('cat-kebersihan');
+    const inputAnggaran   = document.getElementById('anggaran');
 
-    if (!tipe) {
-        catDokumentasi.classList.add('hidden');
-        catTransportasi.classList.add('hidden');
-        catKebersihan.classList.add('hidden');
-        updateTotalAnggaran();
+    // KONDISI 1: Jika memilih Non Dana ATAU Tipe Lokasi belum dipilih
+    if (kategoriDana === 'non_dana' || !tipeLokasi) {
+        wrapperAnggaran.classList.add('hidden');
+        if (inputAnggaran) inputAnggaran.value = 0; // Set 0 jika non-dana
         return;
     }
 
-    if (tipe === 'internal') {
+    // KONDISI 2: Jika Dana DAN Tipe Lokasi sudah diisi
+    wrapperAnggaran.classList.remove('hidden');
+
+    if (tipeLokasi === 'internal') {
         catDokumentasi.classList.remove('hidden');
         catTransportasi.classList.add('hidden');
         catKebersihan.classList.remove('hidden');
-    } else {
+    } else if (tipeLokasi === 'eksternal') {
         catDokumentasi.classList.add('hidden');
         catTransportasi.classList.remove('hidden');
         catKebersihan.classList.add('hidden');
@@ -295,6 +314,14 @@ function recalcRow(input) {
 }
 
 function updateTotalAnggaran() {
+    const kategoriDana = document.getElementById('type').value;
+    const el = document.getElementById('anggaran');
+    
+    if (kategoriDana === 'non_dana') {
+        if (el) el.value = 0;
+        return;
+    }
+
     let total = 0;
     let hasInput = false;
 
@@ -322,7 +349,6 @@ function updateTotalAnggaran() {
         }
     }
 
-    const el = document.getElementById('anggaran');
     if (el) {
         el.value = hasInput ? Math.round(total) : '';
     }
@@ -336,7 +362,10 @@ function initAllSubtotals() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Jalankan trigger baik saat tipe lokasi maupun kategori dana diubah
     document.getElementById('tipe_lokasi').addEventListener('change', onLokasiChange);
+    document.getElementById('type').addEventListener('change', onLokasiChange);
+    
     onLokasiChange();
     initAllSubtotals();
 });

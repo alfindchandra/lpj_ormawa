@@ -51,6 +51,23 @@
                                         <p class="text-gray-900">{{ \Carbon\Carbon::parse($proposal->tanggal_selesai)->format('d F Y') }}</p>
                                     </div>
                                 </div>
+                                
+                                <div>
+                                    <p class="text-sm font-medium text-gray-500 my-2">Tipe Proposal</p>
+                                    @if($proposal->type === 'dana')
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                        Dana
+                                    </span>
+                                    @elseif($proposal->type === 'non_dana')
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                                        Non-Dana
+                                    </span>
+                                    @else
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                        Belum Ditentukan
+                                    </span>
+                                    @endif
+                                </div>
 
                                 <div>
                                     <p class="text-sm font-medium text-gray-500 mb-1">Tipe Lokasi</p>
