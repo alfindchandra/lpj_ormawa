@@ -11,9 +11,17 @@ class LpjController extends Controller
 {
     public function create(Activity $activity)
     {
+        
         $user = Auth::user();
-        if (!in_array($user->role, ['ormawa', 'bem'])) {
+
+        // 1. Validasi Role (Menambahkan 'ormawa' agar sesuai dengan View sebelumnya)
+        if (!in_array($user->role, ['ormawa', 'ukm', 'hmp', 'bem'])) {
             abort(403, 'Hanya ORMAWA dan BEM yang dapat membuat LPJ.');
+        }
+
+        // 2. Validasi Kepemilikan (Hanya pembuat proposal/kegiatan yang berhak)
+        if ($activity->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki hak akses untuk membuat LPJ kegiatan ini.');
         }
         
         if ($activity->lpj) {
@@ -27,9 +35,17 @@ class LpjController extends Controller
     public function store(Request $request, Activity $activity)
     {
         $user = Auth::user();
-        if (!in_array($user->role, ['ormawa', 'bem'])) {
+
+        // 1. Validasi Role
+        if (!in_array($user->role, ['ormawa', 'ukm', 'hmp', 'bem'])) {
             abort(403, 'Hanya ORMAWA dan BEM yang dapat membuat LPJ.');
         }
+
+        // 2. Validasi Kepemilikan
+        if ($activity->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki hak akses untuk membuat LPJ kegiatan ini.');
+        }
+
         $validated = $request->validate([
             'laporan_kegiatan' => 'required|string',
             'realisasi_anggaran' => 'required|numeric|min:0',
@@ -60,6 +76,11 @@ class LpjController extends Controller
 
     public function verify(Request $request, Lpj $lpj)
     {
+        // Pastikan hanya admin (atau pihak verifikator) yang bisa mengakses ini
+        if (Auth::user()->role !== 'admin') {
+            abort(403, 'Hanya Admin yang dapat memverifikasi LPJ.');
+        }
+
         $validated = $request->validate([
             'status' => 'required|in:approved,rejected',
             'catatan_verifikasi' => 'nullable|string'

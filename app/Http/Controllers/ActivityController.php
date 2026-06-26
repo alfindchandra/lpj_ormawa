@@ -13,9 +13,11 @@ class ActivityController extends Controller
     {
         $user = Auth::user();
         
+        // Admin dan BEM bisa melihat semua kegiatan
         if (in_array($user->role, ['admin', 'bem'])) {
             $activities = Activity::with(['user', 'proposal'])->latest()->get();
         } else {
+            // Ormawa, UKM, HMP hanya melihat kegiatan milik mereka sendiri
             $activities = Activity::where('user_id', $user->id)->with('proposal')->latest()->get();
         }
         
@@ -24,6 +26,7 @@ class ActivityController extends Controller
 
     public function create()
     {
+        // Sesuaikan jika hanya BEM yang boleh membuat master kegiatan manual
         if (Auth::user()->role !== 'bem') {
             abort(403, 'Unauthorized action.');
         }
@@ -67,13 +70,15 @@ class ActivityController extends Controller
     {
         $user = Auth::user();
         
-        // Allow ORMAWA who owns the activity or BEM
-        if ($user->role === 'ormawa' && $user->id !== $activity->user_id) {
-            abort(403, 'Anda hanya dapat mengubah status kegiatan milik organisasi Anda.');
+        // 1. Validasi Role: Pastikan role termasuk dalam list ormawa/internal kampus
+        if (!in_array($user->role, ['ormawa', 'ukm', 'hmp', 'bem'])) {
+            abort(403, 'Unauthorized action.');
         }
         
-        if (!in_array($user->role, ['ormawa', 'bem'])) {
-            abort(403, 'Unauthorized action.');
+        // 2. Validasi Kepemilikan: Jika dia adalah pembuat kegiatan (ID cocok), ijinkan.
+        // Jika ID tidak cocok, dia akan terkena 403.
+        if ($user->id !== $activity->user_id) {
+            abort(403, 'Anda hanya dapat mengubah status kegiatan milik organisasi Anda.');
         }
         
         $validated = $request->validate([
@@ -91,13 +96,14 @@ class ActivityController extends Controller
     {
         $user = Auth::user();
         
-        // Allow ORMAWA who owns the activity or BEM
-        if ($user->role === 'ormawa' && $user->id !== $activity->user_id) {
-            abort(403, 'Anda hanya dapat mengupload dokumentasi kegiatan milik organisasi Anda.');
+        // 1. Validasi Role: Izinkan semua rumpun organisasi mahasiswa
+        if (!in_array($user->role, ['ormawa', 'ukm', 'hmp', 'bem'])) {
+            abort(403, 'Unauthorized action.');
         }
         
-        if (!in_array($user->role, ['ormawa', 'bem'])) {
-            abort(403, 'Unauthorized action.');
+        // 2. Validasi Kepemilikan: Hanya pemilik kegiatan yang boleh unggah dokumentasi
+        if ($user->id !== $activity->user_id) {
+            abort(403, 'Anda hanya dapat mengupload dokumentasi kegiatan milik organisasi Anda.');
         }
         
         $validated = $request->validate([
