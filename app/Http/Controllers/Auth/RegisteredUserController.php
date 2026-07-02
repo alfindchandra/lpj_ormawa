@@ -33,7 +33,7 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'role' => ['required', 'string', 'in:hmp,ukm'], // Memastikan role sesuai opsi
+            'role' => ['required', 'string', 'in:operator,ormawa'], // Validasi role harus salah satu dari operator atau ormawa
             'ormawa_name' => ['required', 'string', 'max:255'], // Diwajibkan karena profil ormawa
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);

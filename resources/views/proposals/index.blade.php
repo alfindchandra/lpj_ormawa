@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Daftar Proposal Kegiatan
             </h2>
-            @if(in_array(Auth::user()->role, ['ukm', 'hmp', 'bem']))
+            @if(in_array(Auth::user()->role, ['ukm', 'hmp', 'bem', 'ormawa']))
             <a href="{{ route('proposals.create') }}"
                 class="inline-flex items-center px-4 py-2 mr-4 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 transition duration-150 ease-in-out">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,7 +27,7 @@
             <!-- Filter & Search -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
-                    <div class="grid grid-cols-1 {{ in_array(Auth::user()->role, ['ukm', 'hmp']) ? 'md:grid-cols-2' : 'md:grid-cols-3' }} gap-4">
+                    <div class="grid grid-cols-1 {{ in_array(Auth::user()->role, ['ukm', 'hmp', 'ormawa']) ? 'md:grid-cols-2' : 'md:grid-cols-3' }} gap-4">
                         
                         {{-- Input Cari Kegiatan --}}
                         <div>
@@ -43,14 +43,13 @@
                                 class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                                 <option value="">Semua Status</option>
                                 <option value="pending">Pending</option>
-                                <option value="approved_bem">Disetujui BEM</option>
                                 <option value="approved_admin">Disetujui Admin</option>
                                 <option value="rejected">Ditolak</option>
                             </select>
                         </div>
 
                         {{-- Filter Organisasi (Hanya untuk non-UKM dan non-HMP) --}}
-                        @if(Auth::user()->role !== 'ukm' && Auth::user()->role !== 'hmp')
+                        @if(Auth::user()->role !== 'ukm' && Auth::user()->role !== 'ormawa')
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Filter Organisasi</label>
                             <select id="ormawaFilter"
@@ -100,7 +99,7 @@
                     <tr>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Kegiatan</th>
-                        @if(Auth::user()->role !== 'hmp' && Auth::user()->role !== 'ukm')
+                        @if(Auth::user()->role !== 'hmp' && Auth::user()->role !== 'ormawa')
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Organisasi</th>
                         @endif
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>

@@ -31,46 +31,73 @@
                 </div>
                 @endif
 
+                {{-- Row 1: Periode Masa Jabatan & Tipe Organisasi --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Periode <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Periode Masa Jabatan <span class="text-red-500">*</span></label>
                         <select name="period_id" required
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('period_id') border-red-500 @enderror">
+                            <option value="">-- Pilih Periode --</option>
                             @foreach($periods as $p)
-                            <option value="{{ $p->id }}" {{ old('period_id', $kabinet->period_id) == $p->id ? 'selected' : '' }}>
-                                {{ $p->nama_periode }} {{ $p->is_active ? '✓ Aktif' : '' }}
+                            <option value="{{ $p->id }}" {{ (old('period_id', $kabinet->period_id) == $p->id) ? 'selected' : '' }}>
+                                {{ $p->nama_periode }} ({{ $p->tahun_mulai }}/{{ $p->tahun_selesai }}) {{ $p->is_active ? '✓ Aktif' : '' }}
                             </option>
                             @endforeach
                         </select>
+                        @error('period_id')
+                            <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">Tipe Organisasi <span class="text-red-500">*</span></label>
                         <select name="ormawa_type" required
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="bem" {{ old('ormawa_type', $kabinet->ormawa_type) === 'bem' ? 'selected' : '' }}>🏫 BEM</option>
-                            <option value="hmp" {{ old('ormawa_type', $kabinet->ormawa_type) === 'hmp' ? 'selected' : '' }}>🎓 HMP</option>
-                            <option value="ukm" {{ old('ormawa_type', $kabinet->ormawa_type) === 'ukm' ? 'selected' : '' }}>⭐ UKM</option>
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('ormawa_type') border-red-500 @enderror">
+                            <option value="ormawa" {{ old('ormawa_type', $kabinet->ormawa_type) === 'ormawa' ? 'selected' : '' }}>🌐 Ormawa (Organisasi Mahasiswa)</option>
                         </select>
+                        @error('ormawa_type')
+                            <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {{-- Row 2: Nama Ormawa & Nama Kabinet --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Ormawa/UKM <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                            Nama Ormawa/UKM/HMP <span class="text-red-500">*</span>
+                        </label>
                         <select name="ormawa_name" required
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="">-- Pilih Ormawa/UKM --</option>
-                            @foreach($ormawas as $o)
-                            <option value="{{ $o->ormawa_name }}" {{ old('ormawa_name', $kabinet->ormawa_name) == $o->ormawa_name ? 'selected' : '' }}>
-                                {{ $o->ormawa_name }} ({{ strtoupper($o->ormawa_type) }})
-                            </option>
-                            @endforeach
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('ormawa_name') border-red-500 @enderror">
+                            
+                            @if(auth()->user()->role === 'admin')
+                                {{-- TAMPILAN UNTUK ADMIN: Bisa melihat dan memilih semua ormawa --}}
+                                <option value="">-- Pilih Ormawa/UKM/HMP --</option>
+                                @foreach($ormawas as $o)
+                                    <option value="{{ $o->ormawa_name }}" {{ old('ormawa_name', $kabinet->ormawa_name) == $o->ormawa_name ? 'selected' : '' }}>
+                                        {{ $o->ormawa_name }} ({{ strtoupper($o->ormawa_type) }})
+                                    </option>
+                                @endforeach
+                            @else
+                                {{-- TAMPILAN UNTUK USER BIASA: Mengunci pilihan ke data ormawa milik user tersebut --}}
+                                <option value="{{ auth()->user()->ormawa_name }}" selected>
+                                    {{ auth()->user()->ormawa_name }}
+                                </option>
+                            @endif
+
                         </select>
+                        @error('ormawa_name')
+                            <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
+
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Kabinet</label>
-                        <input type="text" name="nama_kabinet" value="{{ old('nama_kabinet', $kabinet->nama_kabinet) }}"
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <input type="text" name="nama_kabinet" value="{{ old('nama_kabinet', $kabinet->nama_kabinet) }}" 
+                            placeholder="cth: Kabinet Cakrawala (opsional)"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('nama_kabinet') border-red-500 @enderror">
+                        @error('nama_kabinet')
+                            <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
 

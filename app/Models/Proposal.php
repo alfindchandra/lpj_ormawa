@@ -15,7 +15,10 @@ class Proposal extends Model
         'anggaran', 'file_proposal', 'status','type', 'catatan_bem', 'catatan_admin',
         
         // Tambahkan ini agar data kebersihan tersimpan aman
-        'kebersihan_keterangan', 'kebersihan_biaya', 
+        'kebersihan_keterangan', 'kebersihan_biaya',
+
+        // Dana Sponsor
+        'dana_sponsor_keterangan', 'dana_sponsor_biaya',
     ];
 
     protected $casts = [
@@ -23,6 +26,7 @@ class Proposal extends Model
         'tanggal_selesai'=> 'date',
         'anggaran'       => 'decimal:2',
         'kebersihan_biaya'=> 'decimal:2', // Tambahkan cast untuk kebersihan_biaya
+        'dana_sponsor_biaya' => 'decimal:2',
     ];
 
     // ── Relasi ──────────────────────────────────────────────────────────────
@@ -76,6 +80,11 @@ class Proposal extends Model
     public function transportasiItems(): HasMany
     {
         return $this->hasMany(ProposalItem::class)->where('tipe', 'transportasi')->orderBy('urutan');
+    }
+
+    public function dllItems(): HasMany
+    {
+        return $this->hasMany(ProposalItem::class)->where('tipe', 'dll')->orderBy('urutan');
     }
 
     // ── Helper ──────────────────────────────────────────────────────────────

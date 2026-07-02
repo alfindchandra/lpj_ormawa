@@ -14,7 +14,7 @@ class ActivityController extends Controller
         $user = Auth::user();
         
         // Admin dan BEM bisa melihat semua kegiatan
-        if (in_array($user->role, ['admin', 'bem'])) {
+        if (in_array($user->role, ['admin'])) {
             $activities = Activity::with(['user', 'proposal'])->latest()->get();
         } else {
             // Ormawa, UKM, HMP hanya melihat kegiatan milik mereka sendiri

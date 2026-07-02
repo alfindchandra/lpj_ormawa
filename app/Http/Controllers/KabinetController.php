@@ -17,27 +17,27 @@ class KabinetController extends Controller
     {
         $user = Auth::user();
         $periods = Period::orderBy('tahun_mulai', 'desc')->get();
-        $activePeriod = Period::where('is_active', true)->first(); // Menggunakan metode standard jika getActive() custom
+        $activePeriod = Period::where('is_active', true)->first();
 
         // Filter berdasarkan periode yang dipilih
         $selectedPeriodId = $request->get('period_id', $activePeriod?->id);
 
-        // ── 1. LOGIKK FILTER KABINET AKTIF ──────────────────────────────────
+        // ── 1. LOGIK FILTER KABINET AKTIF ──────────────────────────────────
         $aktifQuery = Kabinet::where('is_active', true)->with('period');
 
-        // Jika user adalah ukm atau hmp, batasi hanya melihat nama ormawa mereka sendiri
-        if (in_array($user->role, ['ukm', 'hmp'])) {
+        // Jika user adalah ukm, hmp, atau ormawa, batasi hanya melihat nama ormawa mereka sendiri
+        if (in_array($user->role, ['ukm', 'hmp', 'ormawa'])) {
             $aktifQuery->where('ormawa_name', $user->ormawa_name);
         }
 
         $kabinetsAktif = $aktifQuery->orderBy('ormawa_type')->get();
 
 
-        // ── 2. LOGIKK FILTER RIWAYAT KABINET ────────────────────────────────
+        // ── 2. LOGIK FILTER RIWAYAT KABINET ────────────────────────────────
         $riwayatQuery = Kabinet::where('is_active', false)->with('period');
 
-        // Batasi riwayat kepengurusan jika user ber-role ukm atau hmp
-        if (in_array($user->role, ['ukm', 'hmp'])) {
+        // Batasi riwayat kepengurusan jika user ber-role ukm, hmp, atau ormawa
+        if (in_array($user->role, ['ukm', 'hmp', 'ormawa'])) {
             $riwayatQuery->where('ormawa_name', $user->ormawa_name);
         }
 
@@ -50,16 +50,15 @@ class KabinetController extends Controller
             ->get();
 
 
-        // ── 3. LOGIKK FILTER PROPOSAL PER PERIODE ───────────────────────────
-        $proposalsPeriode = collect(); // Menggunakan collection kosong agar aman dari error if-else di view
+        // ── 3. LOGIK FILTER PROPOSAL PER PERIODE ───────────────────────────
+        $proposalsPeriode = collect(); 
         
         if ($selectedPeriodId) {
             $selectedPeriod = Period::find($selectedPeriodId);
             if ($selectedPeriod) {
                 $proposalQuery = $selectedPeriod->proposals()->with('user');
 
-                // Batasi data proposal yang tampil jika diakses oleh ukm atau hmp
-                if (in_array($user->role, ['ukm', 'hmp'])) {
+                if (in_array($user->role, ['ukm', 'hmp', 'ormawa'])) {
                     $proposalQuery->where('user_id', $user->id);
                 }
 
@@ -84,8 +83,8 @@ class KabinetController extends Controller
     {
         $user = Auth::user();
         
-        // Proteksi tambahan: Hanya admin dan bem yang boleh mengakses halaman create
-        if (!in_array($user->role, ['admin', 'bem'])) {
+        // Sudah tepat: admin, bem, dan ormawa diperbolehkan
+        if (!in_array($user->role, ['admin', 'bem', 'ormawa'])) {
             abort(403, 'Anda tidak memiliki akses untuk menambah data pengurus.');
         }
 
@@ -105,13 +104,13 @@ class KabinetController extends Controller
      */
     public function store(Request $request)
     {
-        if (!in_array(Auth::user()->role, ['admin', 'bem'])) {
+        if (!in_array(Auth::user()->role, ['admin', 'bem', 'ormawa'])) {
             abort(403, 'Aksi dilarang.');
         }
 
         $validated = $request->validate([
             'period_id'        => 'required|exists:periods,id',
-            'ormawa_type'      => 'required|in:bem,hmp,ukm',
+            'ormawa_type'      => 'required|in:bem,hmp,ukm,ormawa',
             'ormawa_name'      => 'required|string|max:100',
             'nama_kabinet'     => 'nullable|string|max:150',
             'nama_ketua'       => 'required|string|max:100',
@@ -138,7 +137,7 @@ class KabinetController extends Controller
     public function edit(Kabinet $kabinet)
     {
         $user = Auth::user();
-        if (!in_array($user->role, ['admin', 'bem'])) {
+        if (!in_array($user->role, ['admin', 'bem', 'ormawa'])) {
             abort(403, 'Anda tidak memiliki akses untuk mengubah data pengurus.');
         }
 
@@ -159,13 +158,14 @@ class KabinetController extends Controller
      */
     public function update(Request $request, Kabinet $kabinet)
     {
-        if (!in_array(Auth::user()->role, ['admin', 'bem'])) {
+        if (!in_array(Auth::user()->role, ['admin', 'bem', 'ormawa'])) {
             abort(403, 'Aksi dilarang.');
         }
 
         $validated = $request->validate([
             'period_id'        => 'required|exists:periods,id',
-            'ormawa_type'      => 'required|in:bem,hmp,ukm',
+            // 🛠️ PERBAIKAN: Menambahkan 'ormawa' ke aturan validasi agar tidak error saat disimpan
+            'ormawa_type'      => 'required|in:bem,hmp,ukm,ormawa',
             'ormawa_name'      => 'required|string|max:100',
             'nama_kabinet'     => 'nullable|string|max:150',
             'nama_ketua'       => 'required|string|max:100',
@@ -191,7 +191,7 @@ class KabinetController extends Controller
      */
     public function destroy(Kabinet $kabinet)
     {
-        if (!in_array(Auth::user()->role, ['admin', 'bem'])) {
+        if (!in_array(Auth::user()->role, ['admin'])) {
             abort(403, 'Aksi dilarang.');
         }
 
@@ -211,7 +211,8 @@ class KabinetController extends Controller
      */
     public function toggleActive(Kabinet $kabinet)
     {
-        if (!in_array(Auth::user()->role, ['admin', 'bem'])) {
+        // 🛠️ PERBAIKAN: Menambahkan 'ormawa' ke dalam daftar role yang diizinkan mengarsipkan kabinet
+        if (!in_array(Auth::user()->role, ['admin', 'bem', 'ormawa'])) {
             abort(403, 'Aksi dilarang.');
         }
 

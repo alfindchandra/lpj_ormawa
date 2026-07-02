@@ -132,6 +132,7 @@
                                         'sewa'         => '4. Penyewaan Alat / Aula',
                                         'dokumentasi'  => '5. Dokumentasi & Penggandaan Kegiatan',
                                         'transportasi' => '5. Biaya Transportasi & Operasional',
+                                        'dll'          => '8. Dll (Lain-lain)',
                                     ];
                                 @endphp
 
@@ -195,6 +196,18 @@
                                     <div class="flex justify-between text-sm font-medium pt-2 border-t border-gray-200">
                                         <span class="text-gray-600">Biaya Kebersihan</span>
                                         <span class="text-gray-900 font-bold">Rp {{ number_format($proposal->kebersihan_biaya, 0, ',', '.') }}</span>
+                                    </div>
+                                </div>
+                                @endif
+
+                                {{-- ── Tampilkan Dana Sponsor secara Mandiri jika ada ── --}}
+                                @if($proposal->dana_sponsor_biaya > 0 || $proposal->dana_sponsor_keterangan)
+                                <div class="p-4 bg-gray-50 border rounded-lg">
+                                    <p class="text-sm font-semibold text-gray-800 mb-1">7. Dana Sponsor</p>
+                                    <p class="text-xs text-gray-500 mb-2">Keterangan: {{ $proposal->dana_sponsor_keterangan ?? '-' }}</p>
+                                    <div class="flex justify-between text-sm font-medium pt-2 border-t border-gray-200">
+                                        <span class="text-gray-600">Nominal Dana Sponsor</span>
+                                        <span class="text-gray-900 font-bold">Rp {{ number_format($proposal->dana_sponsor_biaya, 0, ',', '.') }}</span>
                                     </div>
                                 </div>
                                 @endif

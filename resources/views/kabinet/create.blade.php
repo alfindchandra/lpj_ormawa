@@ -49,10 +49,7 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">Tipe Organisasi <span class="text-red-500">*</span></label>
                         <select name="ormawa_type" required
                             class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('ormawa_type') border-red-500 @enderror">
-                            <option value="">-- Pilih Tipe --</option>
-                            <option value="bem" {{ old('ormawa_type') === 'bem' ? 'selected' : '' }}>🏫 BEM (Badan Eksekutif Mahasiswa)</option>
-                            <option value="hmp" {{ old('ormawa_type') === 'hmp' ? 'selected' : '' }}>🎓 HMP (Himpunan Mahasiswa Program Studi)</option>
-                            <option value="ukm" {{ old('ormawa_type') === 'ukm' ? 'selected' : '' }}>⭐ UKM (Unit Kegiatan Mahasiswa)</option>
+                            <option value="ormawa" {{ old('ormawa_type') === 'ormawa' ? 'selected' : '' }}>🌐 Ormawa (Organisasi Mahasiswa)</option>
                         </select>
                     </div>
                 </div>
@@ -64,15 +61,24 @@
                             Nama Ormawa/UKM/HMP <span class="text-red-500">*</span>
                         </label>
                         <select name="ormawa_name" required
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('ormawa_name') border-red-500 @enderror">
-                            <option value="">-- Pilih Ormawa/UKM/HMP --</option>
+                                class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 @error('ormawa_name') border-red-500 @enderror">
                             
-                            @foreach($ormawas as $o)
-                                {{-- Perbaikan: Menggunakan properti ormawa_name & ormawa_type --}}
-                                <option value="{{ $o->ormawa_name }}" {{ old('ormawa_name') == $o->ormawa_name ? 'selected' : '' }}>
-                                    {{ $o->ormawa_name }} ({{ strtoupper($o->ormawa_type) }})
+                            @if(auth()->user()->role === 'admin')
+                                {{-- TAMPILAN UNTUK ADMIN: Bisa memilih semua ormawa --}}
+                                <option value="">-- Pilih Ormawa/UKM/HMP --</option>
+                                
+                                @foreach($ormawas as $o)
+                                    <option value="{{ $o->ormawa_name }}" {{ old('ormawa_name') == $o->ormawa_name ? 'selected' : '' }}>
+                                        {{ $o->ormawa_name }} ({{ strtoupper($o->ormawa_type) }})
+                                    </option>
+                                @endforeach
+
+                            @else
+                                {{-- TAMPILAN UNTUK USER BIASA: Langsung terkunci ke ormawa tempat dia login --}}
+                                <option value="{{ auth()->user()->ormawa_name }}" selected>
+                                    {{ auth()->user()->ormawa_name }}
                                 </option>
-                            @endforeach
+                            @endif
 
                         </select>
                         @error('ormawa_name')

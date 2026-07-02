@@ -17,7 +17,7 @@ class ProposalController extends Controller
     {
         $user = Auth::user();
 
-        if (in_array($user->role, ['admin', 'bem'])) {
+        if (in_array($user->role, ['admin'])) {
             $proposals = Proposal::with(['user', 'period'])->latest()->get();
         } else {
             $proposals = Proposal::where('user_id', $user->id)->with('period')->latest()->get();
@@ -29,7 +29,7 @@ class ProposalController extends Controller
     public function create()
     {
         $user = Auth::user();
-        if (!in_array($user->role, ['ukm', 'hmp', 'bem'])) {
+        if (!in_array($user->role, ['ukm', 'hmp', 'bem', 'ormawa'])) {
             abort(403, 'Anda tidak memiliki akses untuk membuat proposal. Hanya UKM, HMP, dan BEM yang dapat membuat proposal.');
         }
 
@@ -42,7 +42,7 @@ class ProposalController extends Controller
  public function store(Request $request)
     {
         $user = Auth::user();
-        if (!in_array($user->role, ['ukm', 'hmp', 'bem'])) {
+        if (!in_array($user->role, ['ukm', 'hmp', 'bem', 'ormawa'])) {
             abort(403, 'Anda tidak memiliki akses untuk membuat proposal.');
         }
 
@@ -91,6 +91,14 @@ class ProposalController extends Controller
 
             'kebersihan_keterangan'   => 'nullable|string',
             'kebersihan_biaya'        => 'nullable|numeric|min:0',
+
+            'dana_sponsor_keterangan' => 'nullable|string',
+            'dana_sponsor_biaya'      => 'nullable|numeric|min:0',
+
+            'dll_items'               => 'nullable|array',
+            'dll_items.*.nama'        => 'nullable|string|max:255',
+            'dll_items.*.jumlah'      => 'nullable|integer|min:0',
+            'dll_items.*.harga'       => 'nullable|numeric|min:0',
         ]);
 
         $file     = $request->file('file_proposal');
@@ -113,6 +121,8 @@ class ProposalController extends Controller
                 'anggaran'        => $validated['anggaran'] ?? 0,
                 'kebersihan_keterangan' => $validated['kebersihan_keterangan'] ?? null,
                 'kebersihan_biaya'      => $validated['kebersihan_biaya'] ?? 0,
+                'dana_sponsor_keterangan' => $validated['dana_sponsor_keterangan'] ?? null,
+                'dana_sponsor_biaya'      => $validated['dana_sponsor_biaya'] ?? 0,
             ]);
 
             $this->syncItems($proposal, $request);
@@ -147,7 +157,8 @@ class ProposalController extends Controller
             'honorItems', 
             'sewaItems', 
             'dokumentasiItems', 
-            'transportasiItems'
+            'transportasiItems',
+            'dllItems'
         ]);
 
         $periods      = Period::orderBy('is_active', 'desc')->orderBy('tahun_mulai', 'desc')->get();
@@ -210,6 +221,14 @@ class ProposalController extends Controller
 
             'kebersihan_keterangan'  => 'nullable|string',
             'kebersihan_biaya'       => 'nullable|numeric|min:0',
+
+            'dana_sponsor_keterangan' => 'nullable|string',
+            'dana_sponsor_biaya'      => 'nullable|numeric|min:0',
+
+            'dll_items'               => 'nullable|array',
+            'dll_items.*.nama'        => 'nullable|string|max:255',
+            'dll_items.*.jumlah'      => 'nullable|integer|min:0',
+            'dll_items.*.harga'       => 'nullable|numeric|min:0',
         ]);
 
         // Handle file upload
@@ -237,6 +256,8 @@ class ProposalController extends Controller
                 'anggaran'        => $validated['anggaran'] ?? 0, // Fallback ke 0 jika kosong
                 'kebersihan_keterangan' => $validated['kebersihan_keterangan'] ?? null,
                 'kebersihan_biaya'      => $validated['kebersihan_biaya'] ?? 0,
+                'dana_sponsor_keterangan' => $validated['dana_sponsor_keterangan'] ?? null,
+                'dana_sponsor_biaya'      => $validated['dana_sponsor_biaya'] ?? 0,
             ]);
 
             // Hapus semua item anggaran lama lalu insert ulang (Sync Pattern)
@@ -309,7 +330,7 @@ class ProposalController extends Controller
         // 1. Definisikan semua kategori yang ada di form
         // Kita masukkan semua kategori agar jika tipe_lokasi kosong/tidak dipilih,
         // item dari kategori lain (seperti konsumsi, atk, honor, sewa) tetap masuk ke database.
-        $categories = ['konsumsi', 'atk', 'honor', 'sewa'];
+        $categories = ['konsumsi', 'atk', 'honor', 'sewa', 'dll'];
 
         // 2. Cek kondisional atau masukkan saja ke daftar proses jika ada datanya
         if ($tipe === 'internal') {

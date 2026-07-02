@@ -177,6 +177,28 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    {{-- ── Dana Sponsor (di bawah Kebersihan) ── --}}
+                                    <div id="cat-dana-sponsor" class="mt-5">
+                                        <div class="rounded-lg border border-gray-200 overflow-hidden bg-white">
+                                            <div class="flex items-center justify-between bg-gray-50 px-4 py-3 border-b border-gray-200">
+                                                <span class="text-sm font-semibold text-gray-800">7. Dana Sponsor</span>
+                                            </div>
+                                            <div class="p-4">
+                                                <textarea name="dana_sponsor_keterangan" rows="2" class="w-full rounded-md border-gray-300 text-sm" placeholder="Rincian sumber dana sponsor (nama sponsor, bentuk dukungan, dll)">{{ old('dana_sponsor_keterangan') }}</textarea>
+                                                <div class="mt-2 flex items-center gap-3">
+                                                    <label class="text-xs font-medium text-gray-600">Nominal Dana Sponsor (Rp)</label>
+                                                    <input type="number" name="dana_sponsor_biaya" id="dana_sponsor_biaya" class="flex-1 rounded-md border-gray-300 text-sm" min="0" placeholder="0" value="{{ old('dana_sponsor_biaya') }}">
+                                                </div>
+                                                <p class="mt-1 text-xs text-gray-400">Nominal ini bersifat informasi sumber dana dan tidak mengurangi/menambah Total Anggaran secara otomatis.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- ── Dll (kategori tambahan lain-lain) ── --}}
+                                    <div class="mt-5">
+                                        <x-budget-category-table title="8. Dll" subtitle="Pengeluaran lain-lain yang belum tercakup kategori di atas" section="dll" :items="old('dll_items', $kategoriBlank)" placeholder="Contoh: Biaya lain-lain" />
+                                    </div>
                                 </div>
 
                                 {{-- ── Total Anggaran ── --}}
@@ -217,7 +239,7 @@
     </div>
 
 <script>
-const ALL_SECTIONS = ['konsumsi','atk','honor','sewa','dokumentasi','transportasi'];
+const ALL_SECTIONS = ['konsumsi','atk','honor','sewa','dokumentasi','transportasi','dll'];
 
 function onLokasiChange() {
     const tipe = document.getElementById('tipe_lokasi').value;

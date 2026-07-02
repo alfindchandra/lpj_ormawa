@@ -11,7 +11,7 @@
                 </h2>
             </div>
             
-            @if(in_array(Auth::user()->role, ['admin', 'bem']))
+            
             <a href="{{ route('kabinet.create') }}"
                 class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-5 py-2.5 rounded-xl shadow-sm shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-200">
                 <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,7 +19,7 @@
                 </svg>
                 Tambah Pengurus
             </a>
-            @endif
+            
         </div>
     </x-slot>
 
@@ -115,7 +115,9 @@
             @else
                 @foreach(['bem' => ['BEM', 'bg-blue-600/10 text-blue-700 border-blue-200/60', 'from-blue-600 to-indigo-600', 'ring-blue-100'], 
                           'hmp' => ['HMP', 'bg-emerald-600/10 text-emerald-700 border-emerald-200/60', 'from-emerald-600 to-teal-600', 'ring-emerald-100'], 
-                          'ukm' => ['UKM', 'bg-amber-600/10 text-amber-700 border-amber-200/60', 'from-amber-500 to-orange-600', 'ring-amber-100']] as $type => $meta)
+                          'ukm' => ['UKM', 'bg-amber-600/10 text-amber-700 border-amber-200/60', 'from-amber-500 to-orange-600', 'ring-amber-100'],
+                          'ormawa' => ['ORMAWA', 'bg-violet-600/10 text-violet-700 border-violet-200/60', 'from-violet-600 to-purple-600', 'ring-violet-100']] as $type => $meta),
+                        
                     
                     @php $group = $kabinetsAktif->where('ormawa_type', $type); @endphp
                     @if($group->isNotEmpty())
@@ -202,7 +204,6 @@
                                 </div>
 
                                 {{-- Card Action Footer --}}
-                                @if(in_array(Auth::user()->role, ['admin','bem']))
                                 <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-100 flex gap-2">
                                     <a href="{{ route('kabinet.edit', $kabinet) }}"
                                         class="flex-1 inline-flex items-center justify-center gap-1.5 text-xs bg-white border border-slate-200 hover:border-blue-500 hover:text-blue-600 py-2 rounded-lg font-semibold text-slate-600 shadow-sm transition">
@@ -211,6 +212,8 @@
                                         </svg>
                                         Edit
                                     </a>
+                                    
+
                                     <form action="{{ route('kabinet.toggle-active', $kabinet) }}" method="POST" class="flex-1">
                                         @csrf
                                         <button type="submit" class="w-full inline-flex items-center justify-center gap-1.5 text-xs bg-white border border-slate-200 hover:border-amber-500 hover:text-amber-600 py-2 rounded-lg font-semibold text-slate-600 shadow-sm transition">
@@ -220,8 +223,9 @@
                                             Arsipkan
                                         </button>
                                     </form>
+                                    
                                 </div>
-                                @endif
+                                
                             </div>
                             @endforeach
                         </div>

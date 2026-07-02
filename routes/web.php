@@ -17,9 +17,9 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::middleware(['auth', 'role:bem'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/user-management', [UserManagementController::class, 'index'])->name('users.index');
-    Route::patch('/user-management/{user}', [UserManagementController::class, 'update'])->name('users.update');
+   Route::patch('/user-management/{user}', [UserManagementController::class, 'update'])->name('users.update');
     Route::delete('/user-management/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
 });
 
@@ -95,7 +95,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ============================================================
     Route::get('/kabinet', [KabinetController::class, 'index'])->name('kabinet.index');
 
-    Route::middleware('role:admin,bem')->group(function () {
+    Route::middleware('role:admin,bem,ormawa')->group(function () {
         Route::get('/kabinet/create', [KabinetController::class, 'create'])->name('kabinet.create');
         Route::post('/kabinet', [KabinetController::class, 'store'])->name('kabinet.store');
         Route::get('/kabinet/{kabinet}/edit', [KabinetController::class, 'edit'])->name('kabinet.edit');
