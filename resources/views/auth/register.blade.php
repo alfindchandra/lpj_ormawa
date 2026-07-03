@@ -10,7 +10,8 @@
             </div>
 
             <!-- Body Card Form -->
-            <form method="POST" action="{{ route('register') }}" class="p-6 sm:p-8 space-y-5 bg-gray-50/30">
+            <!-- PERBAIKAN: Menambahkan enctype="multipart/form-data" untuk upload file -->
+            <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="p-6 sm:p-8 space-y-5 bg-gray-50/30">
                 @csrf
 
                 <!-- Kirim data role secara otomatis tanpa input field di UI -->
@@ -41,6 +42,16 @@
                         <x-text-input id="ormawa_name" class="block w-full px-4 py-3 text-sm text-gray-800 bg-transparent border-none focus:ring-0 outline-none placeholder-gray-400 shadow-none" type="text" name="ormawa_name" :value="old('ormawa_name')" required placeholder="Contoh: HMP TI / UKM Musik / BEM" />
                     </div>
                     <x-input-error :messages="$errors->get('ormawa_name')" class="mt-1" />
+                </div>
+
+                <!-- PERBAIKAN: Input Upload Logo Ormawa -->
+                <div class="space-y-1.5">
+                    <x-input-label for="logo" :value="__('Logo Ormawa')" class="text-gray-700 font-semibold text-xs uppercase tracking-wider" />
+                    <div class="relative flex items-center shadow-sm rounded-xl overflow-hidden border border-gray-300 bg-white focus-within:border-emerald-500 focus-within:ring-4 focus-within:ring-emerald-500/10 transition-all duration-200">
+                        <input id="logo" class="block w-full px-4 py-2.5 text-sm text-gray-800 bg-transparent border-none focus:ring-0 outline-none file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 cursor-pointer" type="file" name="logo" accept="image/*" required />
+                    </div>
+                    <p class="text-[10px] text-gray-400 italic mt-0.5">Format: JPG, JPEG, PNG. Maksimal 2MB.</p>
+                    <x-input-error :messages="$errors->get('logo')" class="mt-1" />
                 </div>
 
                 <!-- Input Kata Sandi -->

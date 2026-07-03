@@ -1,17 +1,23 @@
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Update Password') }}
+            {{ __('Update Password & Logo') }}
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __('Ensure your account is using a long, random password to stay secure.') }}
+            {{ __('Ensure your account is using a long, random password to stay secure, and keep your logo up to date.') }}
         </p>
     </header>
 
-    <form method="post" action="{{ route('password.update') }}" class="mt-6 space-y-6">
+    <!-- PENTING: Menambahkan enctype="multipart/form-data" -->
+    <form method="post" action="{{ route('password.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
         @csrf
         @method('put')
+
+        <!-- Bagian Input Logo Baru -->
+       
+
+        <hr class="border-gray-200 my-6" />
 
         <div>
             <x-input-label for="update_password_current_password" :value="__('Current Password')" />

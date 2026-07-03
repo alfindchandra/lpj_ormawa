@@ -77,9 +77,17 @@
                 <div class="flex items-center space-x-3">
                     <div class="flex-shrink-0">
                         <div class="w-10 h-10 bg-blue-300 rounded-full flex items-center justify-center">
-                            <span class="text-blue-900 font-bold text-lg">
-                                {{ substr(Auth::user()->name, 0, 1) }}
-                            </span>
+                            @if(Auth::user()->logo)
+                                <!-- Jika sudah upload logo, tampilkan gambar -->
+                                <img src="{{ asset('storage/' . Auth::user()->logo) }}" alt="Logo {{ Auth::user()->ormawa_name }}" class="w-full h-full object-cover rounded-full">
+                            @else
+                                <!-- Jika belum ada logo, gunakan inisial nama dengan background biru -->
+                                <div class="w-full h-full bg-blue-500 flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm uppercase">
+                                        {{ substr(Auth::user()->name, 0, 1) }}
+                                    </span>
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="flex-1 min-w-0">
@@ -206,10 +214,18 @@
                         <div class="hidden sm:block relative" x-data="{ open: false }">
                             <button @click="open = !open"
                                 class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
-                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold text-sm">
-                                        {{ substr(Auth::user()->name, 0, 1) }}
-                                    </span>
+                                <div class="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden">
+                                    @if(Auth::user()->logo)
+                                        <!-- Jika sudah upload logo, tampilkan gambar -->
+                                        <img src="{{ asset('storage/' . Auth::user()->logo) }}" alt="Logo {{ Auth::user()->ormawa_name }}" class="w-full h-full object-cover">
+                                    @else
+                                        <!-- Jika belum ada logo, gunakan inisial nama dengan background biru -->
+                                        <div class="w-full h-full bg-blue-500 flex items-center justify-center">
+                                            <span class="text-white font-bold text-sm uppercase">
+                                                {{ substr(Auth::user()->name, 0, 1) }}
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
                                 <span class="font-medium">{{ Auth::user()->name }}</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

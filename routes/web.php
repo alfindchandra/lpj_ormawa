@@ -25,7 +25,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     
-    // Dashboard
+    // Dashboard 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Profile Routes

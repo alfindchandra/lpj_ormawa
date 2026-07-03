@@ -13,9 +13,24 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
-        @csrf
-        @method('patch')
+    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
+    @csrf
+    @method('patch')
+    
+     <div>
+        <x-input-label for="update_logo" :value="__('Logo Ormawa / Akun')" />
+        
+        <!-- Preview logo saat ini jika ada -->
+        @if(auth()->user()->logo)
+            <div class="mt-2 mb-2">
+                <img src="{{ asset('storage/' . auth()->user()->logo) }}" alt="Current Logo" class="h-20 w-20 object-cover rounded-md border">
+            </div>
+        @endif
+
+        <x-text-input id="update_logo" name="logo" type="file" class="mt-1 block w-full border border-gray-300 p-2 rounded-md shadow-sm" accept="image/*" />
+        
+        <x-input-error :messages="$errors->get('logo')" class="mt-2" />
+    </div>
 
         <div>
             <x-input-label for="name" :value="__('Name')" />
