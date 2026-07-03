@@ -278,25 +278,39 @@ class ProposalController extends Controller
 
     public function approveAdmin(Request $request, Proposal $proposal)
     {
+        // Validasi catatan admin
         $validated = $request->validate(['catatan_admin' => 'nullable|string']);
-        $proposal->update(['status' => 'approved_admin', 'catatan_admin' => $validated['catatan_admin']]);
+        
+        // Langsung ubah status menjadi approved_admin dari pending
+        $proposal->update([
+            'status' => 'approved_admin', 
+            'catatan_admin' => $validated['catatan_admin']
+        ]);
 
+        // Otomatis generate jadwal kegiatan
         Activity::create([
             'proposal_id' => $proposal->id,
             'user_id'     => $proposal->user_id,
             'status'      => 'scheduled',
         ]);
 
-        return redirect()->back()->with('success', 'Proposal disetujui Admin');
+        return redirect()->back()->with('success', 'Proposal berhasil disetujui oleh Admin');
     }
 
     public function reject(Request $request, Proposal $proposal)
     {
         $validated = $request->validate(['catatan' => 'required|string']);
-        $field     = Auth::user()->role === 'bem' ? 'catatan_bem' : 'catatan_admin';
-        $proposal->update(['status' => 'rejected', $field => $validated['catatan']]);
-        return redirect()->back()->with('success', 'Proposal ditolak');
+        
+        // Karena bypass BEM, semua penolakan dicatat sebagai catatan_admin
+        $proposal->update([
+            'status' => 'rejected', 
+            'catatan_admin' => $validated['catatan']
+        ]);
+        
+        return redirect()->back()->with('success', 'Proposal telah ditolak');
     }
+
+  
 
     public function destroy(Proposal $proposal)
     {

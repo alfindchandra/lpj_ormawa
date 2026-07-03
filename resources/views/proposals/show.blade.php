@@ -273,11 +273,13 @@
                     @endif
 
                     {{-- Status Tracker --}}
+                    {{-- Status Tracker --}}
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">
                             <h3 class="text-lg font-semibold mb-6">Status Proposal</h3>
 
                             <div class="space-y-4">
+                                <!-- Step 1: Diajukan -->
                                 <div class="flex items-start gap-3">
                                     <div class="flex-shrink-0 pt-0.5">
                                         <div class="h-6 w-6 rounded-full bg-green-500 flex items-center justify-center">
@@ -292,9 +294,10 @@
                                     </div>
                                 </div>
 
+                                <!-- Step 2: Persetujuan Admin -->
                                 <div class="flex items-start gap-3">
                                     <div class="flex-shrink-0 pt-0.5">
-                                        @if(in_array($proposal->status, ['approved_bem', 'approved_admin']))
+                                        @if($proposal->status === 'approved_admin')
                                         <div class="h-6 w-6 rounded-full bg-green-500 flex items-center justify-center">
                                             <svg class="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -311,38 +314,54 @@
                                         @endif
                                     </div>
                                     <div>
-                                        <p class="text-sm font-semibold text-gray-900">Disetujui BEM</p>
+                                        <p class="text-sm font-semibold text-gray-900">Verifikasi & Persetujuan Admin</p>
                                         <p class="text-xs text-gray-500">
-                                            @if(in_array($proposal->status, ['approved_bem', 'approved_admin'])) Disetujui
+                                            @if($proposal->status === 'approved_admin') Disetujui Wakil Rektor 1
                                             @elseif($proposal->status === 'rejected') Ditolak
-                                            @else Menunggu
+                                            @else Menunggu Persetujuan
                                             @endif
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div class="flex items-start gap-3">
-                                    <div class="flex-shrink-0 pt-0.5">
-                                        @if($proposal->status === 'approved_admin')
-                                        <div class="h-6 w-6 rounded-full bg-green-500 flex items-center justify-center">
-                                            <svg class="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                            </svg>
-                                        </div>
-                                        @else
-                                        <div class="h-6 w-6 rounded-full bg-gray-300"></div>
-                                        @endif
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-semibold text-gray-900">Disetujui Wakil Rektor 1</p>
-                                        <p class="text-xs text-gray-500">
-                                            {{ $proposal->status === 'approved_admin' ? 'Disetujui' : 'Menunggu' }}
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    {{-- Aksi Admin (Muncul jika user adalah admin dan status masih pending) --}}
+                    @if(Auth::user()->role === 'admin' && $proposal->status === 'pending')
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6">
+                            <h3 class="text-lg font-semibold mb-4">Aksi Admin</h3>
+
+                            <form action="{{ route('proposals.approve-admin', $proposal) }}" method="POST" class="mb-3">
+                                @csrf
+                                <textarea name="catatan_admin" rows="3" placeholder="Catatan Admin (opsional)"
+                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 mb-3 text-sm"></textarea>
+                                <button type="submit"
+                                    class="w-full inline-flex justify-center items-center px-4 py-2 bg-green-600 rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Setujui &amp; Buat Kegiatan
+                                </button>
+                            </form>
+
+                            <form action="{{ route('proposals.reject', $proposal) }}" method="POST"
+                                onsubmit="return confirm('Yakin ingin menolak proposal ini?')">
+                                @csrf
+                                <textarea name="catatan" rows="2" placeholder="Alasan penolakan (wajib)" required
+                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 mb-3 text-sm"></textarea>
+                                <button type="submit"
+                                    class="w-full inline-flex justify-center items-center px-4 py-2 bg-red-600 rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Tolak Proposal
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    @endif
 
                     {{-- Aksi BEM --}}
                     @if(Auth::user()->role === 'bem' && $proposal->status === 'pending')
