@@ -84,19 +84,20 @@ class KabinetController extends Controller
         $user = Auth::user();
         
         // Sudah tepat: admin, bem, dan ormawa diperbolehkan
-        if (!in_array($user->role, ['admin', 'bem', 'ormawa'])) {
+        if (!in_array($user->role, ['admin', 'bem', 'ormawa', 'ukm', 'hmp'])) {
             abort(403, 'Anda tidak memiliki akses untuk menambah data pengurus.');
         }
 
         $periods = Period::orderBy('tahun_mulai', 'desc')->get();
         $activePeriod = Period::where('is_active', true)->first();
+        $ormawa = User::where('id', Auth::id())->value('ormawa_name');
         $ormawas = User::select('ormawa_name', 'role as ormawa_type')
             ->whereNotNull('ormawa_name')
             ->distinct()
             ->orderBy('ormawa_name')
             ->get();
             
-        return view('kabinet.create', compact('periods', 'activePeriod', 'ormawas'));
+        return view('kabinet.create', compact('periods', 'activePeriod', 'ormawas', 'ormawa'));
     }
 
     /**

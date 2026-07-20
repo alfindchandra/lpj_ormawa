@@ -113,12 +113,7 @@
                                 </x-primary-button>
                             </div>
 
-                            <!-- Hubungi Admin -->
-                            <p class="mt-4 text-center text-sm text-gray-500">
-                                Belum memiliki akun pengurus?
-                                <a href="https://wa.me/6287865215760?text=Saya%20ingin%20pengajuan%20pembuatan%20akun"
-                                    class="font-medium text-emerald-600 hover:text-emerald-500 transition-colors hover:underline">Hubungi Admin/BEM</a>
-                            </p>
+                            
                         </form>
                     </div>
                 </div>

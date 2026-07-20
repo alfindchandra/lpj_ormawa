@@ -69,7 +69,7 @@
                                 
                                 @foreach($ormawas as $o)
                                     <option value="{{ $o->ormawa_name }}" {{ old('ormawa_name') == $o->ormawa_name ? 'selected' : '' }}>
-                                        {{ $o->ormawa_name }} ({{ strtoupper($o->ormawa_type) }})
+                                        {{ $o->ormawa_name }} 
                                     </option>
                                 @endforeach
 

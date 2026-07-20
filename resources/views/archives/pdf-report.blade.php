@@ -129,43 +129,19 @@
     .signature-section {
         margin-top: 50px;
         width: 100%;
+        page-break-inside: avoid;
     }
 
     .signature-table {
         width: 100%;
-        table-layout: fixed;
+        border-collapse: collapse;
     }
 
     .signature-table td {
+        width: 50%;
         text-align: center;
         vertical-align: top;
-        padding: 0 10px;
         font-size: 10px;
-        width: 33.33%;
-    }
-
-    .sig-role {
-        font-weight: bold;
-        margin-bottom: 4px;
-        height: 32px;
-        line-height: 1.4;
-    }
-
-    .sig-space {
-        height: 70px;
-        display: block;
-    }
-
-    .sig-name {
-        padding-top: 4px;
-        font-weight: bold;
-        font-size: 10px;
-    }
-
-    .sig-nip {
-        font-size: 9px;
-        margin-top: 2px;
-        color: #333;
     }
 
     /* === FOOTER === */
@@ -276,23 +252,23 @@
         </div>
         @endif
 
-        <!-- Signature -->
         <!-- Bagian Tanda Tangan PDF -->
-<table style="width: 100%; margin-top: 50px; border-collapse: collapse;">
-    <tr>
-        <td style="width: 50%;"></td> <!-- Sisi kiri dikosongkan jika ingin di kanan, atau sesuaikan layout -->
-        <td style="width: 50%; text-align: center;">
-            <p>Mengetahui,</p>
-            <p style="margin-bottom: 80px;">Wakil Rektor Bidang Akademik dan Kemahasiswaan</p>
-            
-            <!-- Nama Pejabat -->
-            <p style="font-weight: bold; text-decoration: underline;">______________________</p>
-           
-        </td>
-    </tr>
-</table>
-
-     
+        <div class="signature-section">
+            <table class="signature-table">
+                <tr>
+                    <td>
+                        <p>Penanggung Jawab,</p>
+                        <p style="margin-bottom: 80px;">&nbsp;</p>
+                        <p style="font-weight: bold; text-decoration: underline;">Dr. Ima Isnaini Taufiqur Rohmah, M.Pd.</p>
+                    </td>
+                    <td>
+                        <p>Mengetahui,</p>
+                        <p style="margin-bottom: 80px;">Wakil Rektor Bidang Akademik dan Kemahasiswaan</p>
+                        <p style="font-weight: bold; text-decoration: underline;">______________________</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
     </div>
 </body>

@@ -23,8 +23,8 @@
             <div class="p-6 sm:p-8 bg-white shadow-sm border border-gray-100 sm:rounded-xl transition duration-200 hover:shadow-md">
                 <div class="max-w-xl">
                     <div class="mb-4">
-                        <h3 class="text-lg font-bold text-gray-900">Informasi Profil BEM</h3>
-                        <p class="text-sm text-gray-600 mt-1">Perbarui nama identitas organisasi kabinet BEM dan alamat email resmi Anda.</p>
+                        <h3 class="text-lg font-bold text-gray-900">Informasi Profil Ormawa</h3>
+                        <p class="text-sm text-gray-600 mt-1">Perbarui nama identitas organisasi kabinet Ormawa dan alamat email resmi Anda.</p>
                     </div>
                     <hr class="border-gray-100 mb-6">
                     @include('profile.partials.update-profile-information-form')

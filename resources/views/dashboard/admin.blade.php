@@ -28,7 +28,8 @@
             </div>
             <!-- Statistics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-                <div class="bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden shadow-lg sm:rounded-lg">
+                <!-- Total Proposal -->
+                <a href="{{ route('proposals.index') }}" class="block bg-gradient-to-br from-blue-500 to-blue-600 overflow-hidden shadow-lg sm:rounded-lg transform transition duration-200 hover:scale-105 hover:shadow-xl">
                     <div class="p-6 text-white">
                         <div class="flex items-center justify-between">
                             <div>
@@ -43,9 +44,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
 
-                <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 overflow-hidden shadow-lg sm:rounded-lg">
+                <!-- Pending Review -->
+                <a href="{{ route('proposals.index', ['status' => 'pending']) }}" class="block bg-gradient-to-br from-yellow-500 to-yellow-600 overflow-hidden shadow-lg sm:rounded-lg transform transition duration-200 hover:scale-105 hover:shadow-xl">
                     <div class="p-6 text-white">
                         <div class="flex items-center justify-between">
                             <div>
@@ -60,9 +62,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
 
-                <div class="bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow-lg sm:rounded-lg">
+                <!-- Kegiatan Berjalan -->
+                <a href="{{ route('activities.index') }}" class="block bg-gradient-to-br from-green-500 to-green-600 overflow-hidden shadow-lg sm:rounded-lg transform transition duration-200 hover:scale-105 hover:shadow-xl">
                     <div class="p-6 text-white">
                         <div class="flex items-center justify-between">
                             <div>
@@ -77,9 +80,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
 
-                <div class="bg-gradient-to-br from-purple-500 to-purple-600 overflow-hidden shadow-lg sm:rounded-lg">
+                <!-- LPJ Pending -->
+                <a href="{{ route('archives.index') }}" class="block bg-gradient-to-br from-purple-500 to-purple-600 overflow-hidden shadow-lg sm:rounded-lg transform transition duration-200 hover:scale-105 hover:shadow-xl">
                     <div class="p-6 text-white">
                         <div class="flex items-center justify-between">
                             <div>
@@ -94,7 +98,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             <!-- Quick Actions -->

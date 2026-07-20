@@ -273,7 +273,6 @@
                     @endif
 
                     {{-- Status Tracker --}}
-                    {{-- Status Tracker --}}
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">
                             <h3 class="text-lg font-semibold mb-6">Status Proposal</h3>
