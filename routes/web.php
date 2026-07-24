@@ -11,6 +11,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\KabinetController;
 use App\Http\Controllers\OrmawaController;
+use App\Http\Controllers\CalendarController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -63,6 +64,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('lpj.verify')
         ->middleware('role:admin');
     
+    // Calendar Routes (Kalender Akademik / Kegiatan Ormawa)
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+
     // Archive Routes
     Route::get('/archives', [ArchiveController::class, 'index'])->name('archives.index');
     Route::get('/archives/{period}', [ArchiveController::class, 'show'])->name('archives.show');

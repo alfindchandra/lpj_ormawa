@@ -168,7 +168,7 @@
                                     </svg>
                                 </a>
 
-                                @if(Auth::user()->role === 'ormawa' || Auth::user()->role === 'admin' && $proposal->status === 'pending')
+                                @if(Auth::user()->role === 'ormawa' || Auth::user()->role === 'admin')
                                 <form action="{{ route('proposals.destroy', $proposal) }}" method="POST"
                                       class="inline-flex items-center" 
                                       onsubmit="return confirm('Yakin ingin menghapus proposal ini?');">
